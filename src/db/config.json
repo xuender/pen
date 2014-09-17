@@ -1,0 +1,14 @@
+{
+  "development": {
+    "driver": "postgres",
+    "source": "user=hexin dbname=go password=hexin"
+  },
+  "production": {
+    "driver": "postgres",
+    "source": "user=hexin dbname=go password=hexin"
+  },
+  "test": {
+    "driver": "postgres",
+    "source": "user=hexin dbname=go password=hexin"
+  }
+}
