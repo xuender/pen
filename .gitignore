@@ -26,3 +26,9 @@ node_modules
 
 # Users Environment Variables
 .lock-wscript
+
+# 类库
+bower_components
+# 生成文件
+src/public
+

@@ -16,9 +16,9 @@ type User struct {
 }
 func (m *M) AddUser_1410943885_Up(hd *hood.Hood) {
   hd.CreateTable(&User{})
-  hd.CreateIndex("user", "i_nick", true, "nick")
-  hd.CreateIndex("user", "i_email", true, "email")
-  hd.CreateIndex("user", "i_mobile", true, "mobile")
+  hd.CreateIndex("user", "i_user_nick", true, "nick")
+  hd.CreateIndex("user", "i_user_email", true, "email")
+  hd.CreateIndex("user", "i_user_mobile", true, "mobile")
 }
 
 func (m *M) AddUser_1410943885_Down(hd *hood.Hood) {
