@@ -7,25 +7,25 @@ import (
   "github.com/go-martini/martini"
   "github.com/martini-contrib/render"
   "github.com/martini-contrib/gzip"
+  "code.google.com/p/go.net/websocket"
 )
 
 func main() {
   defer log.Flush()
   log.Info("启动")
   // 检查文件完整性
-  err := base.CheckFiles()
-  if(err!=nil){
-    log.Error(err)
-    return
-  }
+  //err := base.CheckFiles()
+  //if(err!=nil){
+  //  log.Error(err)
+  //  return
+  //}
   m := martini.Classic()
   // gzip支持
   m.Use(gzip.All())
   // 模板支持
   m.Use(render.Renderer())
-  //m.Get("/", func() string {
-  //  return "wwww"
-  //})
+  // websocket 支持
+  m.Get("/ws", websocket.Handler(base.WsHandler).ServeHTTP)
   m.NotFound(func(r render.Render){
     r.HTML(404, "404", nil)
   })
