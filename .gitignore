@@ -31,4 +31,5 @@ node_modules
 bower_components
 # 生成文件
 src/public
+src/base/checkData.go
 
