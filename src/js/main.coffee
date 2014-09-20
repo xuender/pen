@@ -15,7 +15,6 @@ angular.module('pen', [
 
 PenCtrl = ($scope, $modal, ngSocket, lss)->
   ### 主控制器 ###
-  console.info('xxxx')
   ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
   ws.onMessage((data)->
     #dmsg = JSON.parse(data.data)
