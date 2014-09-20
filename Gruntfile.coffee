@@ -177,7 +177,7 @@ module.exports = (grunt)->
         files:
           'src/public/js/main.min.js': [
             'src/js/main.coffee'
-            'src/js/login.coffee'
+            #'src/js/login.coffee'
           ]
     uglify:
       main:

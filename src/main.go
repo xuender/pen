@@ -8,6 +8,7 @@ import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/gzip"
 	"github.com/martini-contrib/render"
+  "./utils"
 )
 
 func main() {
@@ -29,6 +30,11 @@ func main() {
 	m.NotFound(func(r render.Render) {
 		r.HTML(404, "404", nil)
 	})
+  // 注册接收测试消息
+  utils.RegisterEvent("test", testEvent)
 	m.Run()
 	log.Info("退出")
+}
+func testEvent(data *string){
+  log.Info(*data)
 }
