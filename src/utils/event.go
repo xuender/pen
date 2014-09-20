@@ -5,7 +5,7 @@ import (
 
 var commands = make(map[string]func(*string))
 
-// 注册命令
+// 注册事件
 func RegisterEvent(event string,command func(*string)){
   if reflect.TypeOf(command).Kind() != reflect.Func {
     panic("command must be a callable func")
@@ -16,5 +16,8 @@ func RegisterEvent(event string,command func(*string)){
 
 // 事件触发
 func Event(event string,data *string){
-  commands[event](data)
+  command, ok := commands[event]
+  if ok{
+    command(data)
+  }
 }
