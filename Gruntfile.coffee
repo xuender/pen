@@ -15,7 +15,7 @@ module.exports = (grunt)->
     clean:
       dist: [
         'dist'
-        'src/public'
+        'src_go/public'
       ]
     bump:
       options:
@@ -28,7 +28,7 @@ module.exports = (grunt)->
           src: [
             '*.html'
           ]
-          dest: 'src/public'
+          dest: 'src_go/public'
           filter: 'isFile'
           expand: true
         ]
@@ -42,7 +42,7 @@ module.exports = (grunt)->
             'js/*.min.js'
             'js/*.map'
           ]
-          dest: 'src/public'
+          dest: 'src_go/public'
           expand: true
         ]
       angular:
@@ -53,7 +53,7 @@ module.exports = (grunt)->
             'angular.min.js'
             'angular.min.js.map'
           ]
-          dest: 'src/public/js'
+          dest: 'src_go/public/js'
           expand: true
           filter: 'isFile'
         ]
@@ -63,7 +63,7 @@ module.exports = (grunt)->
           src: [
             'angular-local-storage.min.js'
           ]
-          dest: 'src/public/js'
+          dest: 'src_go/public/js'
           expand: true
           filter: 'isFile'
         ]
@@ -74,7 +74,7 @@ module.exports = (grunt)->
             'jquery.min.js'
             'jquery.min.map'
           ]
-          dest: 'src/public/js'
+          dest: 'src_go/public/js'
           expand: true
           filter: 'isFile'
         ]
@@ -85,7 +85,7 @@ module.exports = (grunt)->
             'angular-file-upload-html5-shim.min.js'
             'angular-file-upload.min.js'
           ]
-          dest: 'src/public/js'
+          dest: 'src_go/public/js'
           expand: true
           filter: 'isFile'
         ]
@@ -95,7 +95,7 @@ module.exports = (grunt)->
           src: [
             'hotkey.min.js'
           ]
-          dest: 'src/public/js'
+          dest: 'src_go/public/js'
           expand: true
           filter: 'isFile'
         ]
@@ -105,7 +105,7 @@ module.exports = (grunt)->
           src: [
             'ngSocket.js'
           ]
-          dest: 'src/public/js'
+          dest: 'src_go/public/js'
           expand: true
           filter: 'isFile'
         ]
@@ -115,7 +115,7 @@ module.exports = (grunt)->
           src: [
             'ui-bootstrap-tpls.min.js'
           ]
-          dest: 'src/public/js'
+          dest: 'src_go/public/js'
           expand: true
           filter: 'isFile'
         ]
@@ -125,7 +125,7 @@ module.exports = (grunt)->
           src: [
             'font-awesome.min.css'
           ]
-          dest: 'src/public/css'
+          dest: 'src_go/public/css'
           expand: true
           filter: 'isFile'
         ]
@@ -135,7 +135,7 @@ module.exports = (grunt)->
           src: [
             '*'
           ]
-          dest: 'src/public/fonts'
+          dest: 'src_go/public/fonts'
           expand: true
           filter: 'isFile'
         ]
@@ -146,7 +146,7 @@ module.exports = (grunt)->
             'textAngular-sanitize.min.js'
             'textAngular.min.js'
           ]
-          dest: 'src/public/js'
+          dest: 'src_go/public/js'
           expand: true
           filter: 'isFile'
         ]
@@ -156,7 +156,7 @@ module.exports = (grunt)->
           src: [
             'jquery.ba-resize.min.js'
           ]
-          dest: 'src/public/js'
+          dest: 'src_go/public/js'
           expand: true
           filter: 'isFile'
         ]
@@ -166,7 +166,7 @@ module.exports = (grunt)->
           src: [
             'main.css'
           ]
-          dest: 'src/public/css'
+          dest: 'src_go/public/css'
           expand: true
           filter: 'isFile'
         ]
@@ -175,20 +175,20 @@ module.exports = (grunt)->
         bare: true
       main:
         files:
-          'src/public/js/main.min.js': [
+          'src_go/public/js/main.min.js': [
             'src/js/main.coffee'
             #'src/js/login.coffee'
           ]
     uglify:
       main:
         files:
-          'dist/public/js/main.min.js': [
-            'src/public/js/main.min.js'
+          'dist/go/public/js/main.min.js': [
+            'src_go/public/js/main.min.js'
           ]
     cssmin:
       toolbox:
         expand: true
-        cwd: 'src/public/css/'
+        cwd: 'src_go/public/css/'
         src: ['*.css', '!*.min.css'],
         dest: 'dist/css/'
         #ext: '.min.css'

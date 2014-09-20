@@ -30,6 +30,6 @@ node_modules
 # 类库
 bower_components
 # 生成文件
-src/public
-src/base/checkData.go
+src_go/public
+src_go/base/checkData.go
 
