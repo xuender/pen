@@ -4,6 +4,7 @@ import (
   "../utils"
   "code.google.com/p/go.net/websocket"
   log "github.com/cihub/seelog"
+  "encoding/json"
 )
 
 // 消息内容
@@ -33,7 +34,7 @@ func WsHandler(ws *websocket.Conn) {
     var reply WsData
     if err = websocket.JSON.Receive(ws, &reply); err != nil {
       delete(onlines, ws)
-      log.Error("关闭连接, 在线用户:%d", 0) // len(onlines))
+      log.Error("关闭连接, 在线用户:%d", len(onlines))
       // TODO 删除用户事件
       break
     }
@@ -42,7 +43,7 @@ func WsHandler(ws *websocket.Conn) {
     if !ok {
       user, err := FindUser(reply.Message.Name)
       session.IsLogin = false
-      session.Nick = "guest"
+      session.Nick = "来宾"
       if err == nil {
         session.IsLogin = true
         session.Nick = user.Nick
@@ -77,4 +78,21 @@ func WsHandler(ws *websocket.Conn) {
     //  initHandler(ws, user, reply.Message)
     //}
   }
+}
+// 登录信息
+type LoginData struct {
+  Nick    string  `json:"nick"`
+  Token   string  `json:"token"`
+}
+// 登录事件
+func loginEvent(data *string){
+  log.Info(*data)
+  var ld LoginData
+  if err := json.Unmarshal([]byte(*data), &ld); err == nil {
+    log.Debugf("[ %s ] 开始登录", ld.Nick)
+  }
+}
+// 初始化
+func init(){
+  utils.RegisterEvent("base.login", loginEvent)
 }
