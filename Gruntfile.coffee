@@ -67,6 +67,16 @@ module.exports = (grunt)->
           expand: true
           filter: 'isFile'
         ]
+      md5:
+        files: [
+          cwd: 'bower_components/blueimp-md5/js'
+          src: [
+            'md5.min.js'
+          ]
+          dest: 'src_go/public/js'
+          expand: true
+          filter: 'isFile'
+        ]
       jquery:
         files: [
           cwd: 'bower_components/jquery/dist'

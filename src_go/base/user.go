@@ -15,9 +15,9 @@ func (u User) check(password string) bool{
 
 // TODO 使用数据库替换
 // 查找用户
-func FindUser(name string) (User, error){
-  if name == "ender" {
-    return  User{Id:2, Nick:"xcy", Email:"xcy@gmail.com", Password:"123"}, nil
+func FindUser(nick string) (User, error){
+  if nick == "ender" {
+    return  User{Id:2, Nick:"ender", Email:"xxx@xxx", Password:"d9b1d7db4cd6e70935368a1efb10e377"}, nil
   }
   //for _, v := range users{
   //  if v.Nick == name{

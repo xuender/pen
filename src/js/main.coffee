@@ -15,10 +15,21 @@ angular.module('pen', [
 
 PenCtrl = ($scope, $modal, ngSocket, lss)->
   ### 主控制器 ###
+  $scope.token = ''
+  commands = {}
+  $scope.eventLogin = (data)->
+    # 登陆事件
+    if data == 'ERROR_PASSWORD'
+      $scope.showLogin()
+    if data == 'ERROR_NICK'
+      $scope.showLogin()
+
+  commands['base.login'] = $scope.eventLogin
   ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
   ws.onMessage((data)->
-    #dmsg = JSON.parse(data.data)
-    console.info(data)
+    dmsg = JSON.parse(JSON.parse(data.data))
+    $scope.tract = dmsg.tract
+    commands[dmsg.event](dmsg.data)
   )
 
   $scope.send = ->
@@ -32,9 +43,11 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
   $scope.wsLogin = ->
     #登录
     console.info('login', $scope.user)
+    v = $scope.user
+    v.token = md5($scope.tract + $scope.user.token)
     ws.send(
-      Event: 'base.login'
-      Data: JSON.stringify($scope.user)
+      event: 'base.login'
+      data: JSON.stringify(v)
     )
   $scope.init = ->
     ### 初始化 ###
@@ -66,6 +79,7 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
     )
     i.result.then((user)->
       $scope.user = angular.copy(user)
+      $scope.user.token = md5((new Date()).format('yyyy-MM-dd') + md5(md5($scope.user.token)))
       lss.set('user', $scope.user)
       $scope.wsLogin()
       #if init
@@ -97,3 +111,22 @@ PenCtrl.$inject = [
   'ngSocket'
   'localStorageService'
 ]
+Date.prototype.format = (format)->
+  o =
+    "M+": this.getMonth()+1 #month 
+    "d+": this.getDate() #day 
+    "h+": this.getHours() #hour 
+    "m+": this.getMinutes() #minute 
+    "s+": this.getSeconds() #second 
+    "q+": Math.floor((this.getMonth()+3)/3) #quarter 
+    "S": this.getMilliseconds() #millisecond 
+
+  if(/(y+)/.test(format))
+    format = format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length))
+  for k of o
+    if new RegExp("(#{k})").test(format)
+      v = o[k]
+      if RegExp.$1.length!=1
+        v = ("00"+ o[k]).substr((""+ o[k]).length)
+      format = format.replace(RegExp.$1, v)
+  format

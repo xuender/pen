@@ -1,18 +1,27 @@
 package base
 
 import (
+  "reflect"
   "../utils"
   "code.google.com/p/go.net/websocket"
+  "code.google.com/p/go-uuid/uuid"
   log "github.com/cihub/seelog"
   "encoding/json"
+  "unsafe"
+  "fmt"
+  "time"
 )
 
 // 消息内容
 type WsMessage struct {
-  Event   string
-  Data    string
-  Name    string
-  Md5     string
+  // 消息事件
+  Event   string    `json:"event"`
+  // 消息体
+  Data    string    `json:"data"`
+  // 身份认证令牌
+  Token   string    `json:"token"`
+  // 管道
+  Tract   string    `json:"tract"`
 }
 // ws消息
 type WsData struct {
@@ -23,6 +32,10 @@ type Session struct{
   IsLogin   bool
   Nick      string
   User      User
+  // 管道
+  Tract   string
+  // 身份认证令牌
+  Token   string
 }
 
 // 在线用户
@@ -41,42 +54,45 @@ func WsHandler(ws *websocket.Conn) {
     log.Debugf("接收信息: %s", reply)
     session, ok := onlines[ws]
     if !ok {
-      user, err := FindUser(reply.Message.Name)
+      //user, err := FindUser(reply.Message.Name)
       session.IsLogin = false
       session.Nick = "来宾"
-      if err == nil {
-        session.IsLogin = true
-        session.Nick = user.Nick
-        session.User = user
-      }
-      // TODO 消息身份认证
+      session.Tract = fmt.Sprintf("%d", unsafe.Pointer(ws))
+      session.Token = uuid.NewUUID().String()
       onlines[ws] = session
-      // TODO 增加用户通知所有客户端，需要调用观察者
-      if err = websocket.JSON.Send(ws, ok); err != nil {
-        log.Error("不能发送消息到客户端")
-        break
+      // 服务器要求客户端发送登陆信息
+      send(ws, "base.login", "login")
+    }else{
+      log.Debugf("收到消息,来自:%s", session.Nick)
+      if session.Token == reply.Message.Token {
+        // 消息处理
+        Event(reply.Message.Event, &reply.Message.Data, ws)
+      }else{
+        Event("base.login", &reply.Message.Data, ws)
       }
     }
-    // TODO 消息身份认证
-    log.Debugf("收到消息,来自:%s", session.Nick)
-    // 消息处理
-    utils.Event(reply.Message.Event, &reply.Message.Data)
     //user, ok := onlines[ws]
     //if !ok {
     //  log.Debugf("初始化, 在线用户:%d", len(onlines))
     //  user = reply.Message.Source
     //  onlines[ws] = user
     //}
-    //switch reply.Message.Command {
-    //case "login":
-    //  loginHandler(ws, user, reply.Message)
-    //case "logout":
-    //  logoutHandler(ws, user, reply.Message)
-    //case "chat":
-    //  chatHandler(ws, user, reply.Message)
-    //case "init":
-    //  initHandler(ws, user, reply.Message)
-    //}
+  }
+}
+// 发送消息
+func send(ws *websocket.Conn,event string, data string){
+  var m WsMessage
+  m.Event = event
+  m.Data = data
+  session := onlines[ws]
+  m.Tract = session.Tract
+  s, err := json.Marshal(m);
+  if err != nil {
+    log.Errorf("JSON编码错误: %s", data)
+  }
+  log.Debugf("发送的数据: %s",string(s))
+  if err = websocket.JSON.Send(ws, string(s)); err != nil {
+    log.Error("不能发送消息到客户端")
   }
 }
 // 登录信息
@@ -85,14 +101,54 @@ type LoginData struct {
   Token   string  `json:"token"`
 }
 // 登录事件
-func loginEvent(data *string){
+// 服务器保存[加密密码]=md5(md5(密码))，加密密码保存在数据库
+// 用户本地存储保存[当天加密密码]=md5(日期+加密密码)
+// 客户端访问服务器获取管道(Tract),生成[令牌(Token)]=md5(管道track+当天加密密码)
+// 客户端将令牌Token保存在本地存储，每次访问提交令牌，直到令牌过期
+func loginEvent(data *string, ws *websocket.Conn, session *Session){
   log.Info(*data)
   var ld LoginData
   if err := json.Unmarshal([]byte(*data), &ld); err == nil {
     log.Debugf("[ %s ] 开始登录", ld.Nick)
+    if user, e := FindUser(ld.Nick); e == nil{
+      token := utils.Md5(session.Tract + utils.Md5(time.Now().Format("2006-01-02") + user.Password))
+      if token == ld.Token {
+        session.Token = token
+        session.User = user
+        session.IsLogin = true
+      }else{
+        send(ws, "base.login", "ERROR_PASSWORD")
+      }
+    }else{
+      send(ws, "base.login", "ERROR_NICK")
+    }
+  }else{
+    send(ws, "base.login", "ERROR_DATA")
   }
 }
 // 初始化
 func init(){
-  utils.RegisterEvent("base.login", loginEvent)
+  RegisterEvent("base.login", loginEvent)
+}
+// ws事件
+var commands = make(map[string]func(*string, *websocket.Conn, *Session))
+
+// 注册事件
+func RegisterEvent(event string,command func(*string, *websocket.Conn, *Session)){
+  if reflect.TypeOf(command).Kind() != reflect.Func {
+    panic("command must be a callable func")
+    return
+  }
+  commands[event] = command
+}
+
+// 事件触发
+func Event(event string, data *string, ws *websocket.Conn){
+  command, ok := commands[event]
+  if ok{
+    session, ok := onlines[ws]
+    if ok{
+      command(data, ws, &session)
+    }
+  }
 }
