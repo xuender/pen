@@ -44,10 +44,12 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
     #登录
     console.info('login', $scope.user)
     v = $scope.user
-    v.token = md5($scope.tract + $scope.user.token)
+    $scope.token = md5($scope.tract + $scope.user.token)
+    v.token = $scope.token
     ws.send(
       event: 'base.login'
       data: JSON.stringify(v)
+      token: $scope.token
     )
   $scope.init = ->
     ### 初始化 ###
