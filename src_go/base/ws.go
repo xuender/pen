@@ -63,7 +63,7 @@ func WsHandler(ws *websocket.Conn) {
       // 服务器要求客户端发送登陆信息
       send(ws, "base.login", "login")
     }else{
-      log.Debugf("收到消息,来自:%s", session.Nick)
+      log.Debugf("收到消息,来自:%s Token:%s message.Token:%s", session.Nick, session.Token, reply.Message.Token)
       if session.Token == reply.Message.Token {
         // 消息处理
         Event(reply.Message.Event, &reply.Message.Data, ws)
@@ -105,17 +105,21 @@ type LoginData struct {
 // 用户本地存储保存[当天加密密码]=md5(日期+加密密码)
 // 客户端访问服务器获取管道(Tract),生成[令牌(Token)]=md5(管道track+当天加密密码)
 // 客户端将令牌Token保存在本地存储，每次访问提交令牌，直到令牌过期
-func loginEvent(data *string, ws *websocket.Conn, session *Session){
+func loginEvent(data *string, ws *websocket.Conn, session Session){
   log.Info(*data)
   var ld LoginData
   if err := json.Unmarshal([]byte(*data), &ld); err == nil {
     log.Debugf("[ %s ] 开始登录", ld.Nick)
     if user, e := FindUser(ld.Nick); e == nil{
       token := utils.Md5(session.Tract + utils.Md5(time.Now().Format("2006-01-02") + user.Password))
+      log.Debugf("服务器token: %s, 客户端token: %s", token, ld.Token)
       if token == ld.Token {
+        session.Nick = user.Nick
         session.Token = token
         session.User = user
         session.IsLogin = true
+        onlines[ws] = session
+        log.Debugf("ws.Token:%s, session.Token:%s", onlines[ws].Token, session.Token)
       }else{
         send(ws, "base.login", "ERROR_PASSWORD")
       }
@@ -126,15 +130,25 @@ func loginEvent(data *string, ws *websocket.Conn, session *Session){
     send(ws, "base.login", "ERROR_DATA")
   }
 }
+// 登出
+func logoutEvent(data *string, ws *websocket.Conn, session Session){
+  log.Debugf("用户登出: %s", session.User.Nick)
+  session.IsLogin = false
+  session.Token = uuid.NewUUID().String()
+  session.Nick = "来宾"
+  //session.User = nil
+  //TODO 人数统计修改
+}
 // 初始化
 func init(){
   RegisterEvent("base.login", loginEvent)
+  RegisterEvent("base.logout", logoutEvent)
 }
 // ws事件
-var commands = make(map[string]func(*string, *websocket.Conn, *Session))
+var commands = make(map[string]func(*string, *websocket.Conn, Session))
 
 // 注册事件
-func RegisterEvent(event string,command func(*string, *websocket.Conn, *Session)){
+func RegisterEvent(event string,command func(*string, *websocket.Conn, Session)){
   if reflect.TypeOf(command).Kind() != reflect.Func {
     panic("command must be a callable func")
     return
@@ -148,7 +162,7 @@ func Event(event string, data *string, ws *websocket.Conn){
   if ok{
     session, ok := onlines[ws]
     if ok{
-      command(data, ws, &session)
+      command(data, ws, session)
     }
   }
 }

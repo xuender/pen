@@ -24,8 +24,10 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
     if data == 'ERROR_NICK'
       $scope.showLogin()
     if data == 'login'
-      $scope.wsLogin()
-      #$scope.showLogin(true)
+      if $scope.token
+        $scope.wsLogin()
+      else
+        $scope.showLogin(true)
 
   commands['base.login'] = $scope.eventLogin
   ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
@@ -63,16 +65,11 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
       $scope.user =
         nick: '来宾'
         token: ''
-      $scope.showLogin(true)
     else
       $scope.user = user
-      ws.send(
-        event: 'base.init'
-      )
-      #$scope.wsLogin()
-      #ws.send(
-      #  Command: 'init'
-      #)
+    ws.send(
+      event: 'base.init'
+    )
   $scope.showLogin = (init = false)->
     ### 显示登录窗口 ###
     i = $modal.open(
@@ -83,19 +80,18 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
       size: 'sm'
       resolve:
         user: ->
-          angular.copy($scope.user)
+          {
+            nick: $scope.user.nick
+            password: ''
+          }
         init: ->
           init
     )
     i.result.then((user)->
-      $scope.user = angular.copy(user)
-      $scope.user.token = md5((new Date()).format('yyyy-MM-dd') + md5(md5($scope.user.password)))
+      $scope.user.nick= user.nick
+      $scope.user.token = md5((new Date()).format('yyyy-MM-dd') + md5(md5(user.password)))
       lss.set('user', $scope.user)
       $scope.wsLogin()
-      #if init
-      #  ws.send(
-      #    Command: 'init'
-      #  )
     ,->
       console.info '取消'
     )
@@ -106,13 +102,14 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
   $scope.logout = ->
     ### 登出 ###
     $scope.user =
-      email: ''
-      nick: ''
+      nick: '来宾'
+      token: ''
     lss.remove('user')
     ws.send(
-      Command: 'logout'
+      event: 'base.logout'
+      token: $scope.token
     )
-    $scope.messages = []
+    #$scope.messages = []
     $scope.showLogin(true)
   $scope.init()
 PenCtrl.$inject = [
