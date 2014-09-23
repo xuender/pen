@@ -24,18 +24,26 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
     if data == 'ERROR_NICK'
       $scope.showLogin()
     if data == 'login'
-      if $scope.token
+      if $scope.user.token
         $scope.wsLogin()
       else
         $scope.showLogin(true)
+  $scope.userCount = 0
+
+  $scope.eventCount = (data)->
+    # 在线用户数
+    $scope.userCount = data
+    console.info 'userCount: ', data
 
   commands['base.login'] = $scope.eventLogin
+  commands['base.count'] = $scope.eventCount
   ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
   ws.onMessage((data)->
     dmsg = JSON.parse(JSON.parse(data.data))
-    console.debug("ws onMessage:#{dmsg.event} data:#{dmsg.data}")
     $scope.tract = dmsg.tract
-    commands[dmsg.event](dmsg.data)
+    console.debug("ws onMessage:#{dmsg.event} data:#{dmsg.data}")
+    if dmsg.event of commands
+      commands[dmsg.event](dmsg.data)
   )
 
   $scope.send = ->

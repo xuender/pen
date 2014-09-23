@@ -10,6 +10,7 @@ import (
   "unsafe"
   "fmt"
   "time"
+  "gopkg.in/fatih/set.v0"
 )
 
 // 消息内容
@@ -46,7 +47,10 @@ func WsHandler(ws *websocket.Conn) {
   for {
     var reply WsData
     if err = websocket.JSON.Receive(ws, &reply); err != nil {
+      // 取消一切观察
+      RemoveOb(ws)
       delete(onlines, ws)
+      updateCount()
       log.Error("关闭连接, 在线用户:%d", len(onlines))
       // TODO 删除用户事件
       break
@@ -62,6 +66,8 @@ func WsHandler(ws *websocket.Conn) {
       onlines[ws] = session
       // 服务器要求客户端发送登陆信息
       send(ws, "base.login", "login")
+      // 开始关注在线人数
+      RegisterOb("base.count", ws)
     }else{
       log.Debugf("收到消息,来自:%s Token:%s message.Token:%s", session.Nick, session.Token, reply.Message.Token)
       if session.Token == reply.Message.Token {
@@ -120,6 +126,7 @@ func loginEvent(data *string, ws *websocket.Conn, session Session){
         session.IsLogin = true
         onlines[ws] = session
         log.Debugf("ws.Token:%s, session.Token:%s", onlines[ws].Token, session.Token)
+        updateCount()
       }else{
         send(ws, "base.login", "ERROR_PASSWORD")
       }
@@ -130,12 +137,23 @@ func loginEvent(data *string, ws *websocket.Conn, session Session){
     send(ws, "base.login", "ERROR_DATA")
   }
 }
+// 统计在线人数
+func updateCount(){
+  count := 0
+  for _, session:= range onlines {
+    if session.IsLogin {
+      count++
+    }
+  }
+  ObUpdate("base.count", "base.count", fmt.Sprintf("%d", count))
+}
 // 登出
 func logoutEvent(data *string, ws *websocket.Conn, session Session){
   log.Debugf("用户登出: %s", session.User.Nick)
   session.IsLogin = false
   session.Token = uuid.NewUUID().String()
   session.Nick = "来宾"
+  updateCount()
   //session.User = nil
   //TODO 人数统计修改
 }
@@ -143,6 +161,46 @@ func logoutEvent(data *string, ws *websocket.Conn, session Session){
 func init(){
   RegisterEvent("base.login", loginEvent)
   RegisterEvent("base.logout", logoutEvent)
+}
+// 交互观察者
+var obmap = make(map[string]*set.Set)
+// 取消观察者
+func RemoveNameOb(name string, ws *websocket.Conn){
+  s, ok := obmap[name]
+  if ok{
+    s.Remove(ws)
+  }
+}
+// 取消观察者
+func RemoveOb(ws *websocket.Conn){
+  for _, s := range obmap{
+    s.Remove(ws)
+  }
+}
+// 注册观察者
+func RegisterOb(name string, ws *websocket.Conn){
+  s, ok := obmap[name]
+  if ok{
+    s.Add(ws)
+  }else{
+    s = set.New()
+    s.Add(ws)
+    obmap[name] = s
+  }
+}
+// 消息分发
+func ObUpdate(name string, event string, data string){
+  s, ok := obmap[name]
+  if ok {
+    l := s.Size()
+    items := s.List()
+    for i:=0;i<l;i++{
+      ws, ok := items[i].(*websocket.Conn)
+      if ok{
+        send(ws, event, data)
+      }
+    }
+  }
 }
 // ws事件
 var commands = make(map[string]func(*string, *websocket.Conn, Session))
