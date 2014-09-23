@@ -23,11 +23,15 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
       $scope.showLogin()
     if data == 'ERROR_NICK'
       $scope.showLogin()
+    if data == 'login'
+      $scope.wsLogin()
+      #$scope.showLogin(true)
 
   commands['base.login'] = $scope.eventLogin
   ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
   ws.onMessage((data)->
     dmsg = JSON.parse(JSON.parse(data.data))
+    console.debug("ws onMessage:#{dmsg.event} data:#{dmsg.data}")
     $scope.tract = dmsg.tract
     commands[dmsg.event](dmsg.data)
   )
@@ -44,6 +48,7 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
     #登录
     console.info('login', $scope.user)
     v = $scope.user
+    console.info($scope.tract)
     $scope.token = md5($scope.tract + $scope.user.token)
     v.token = $scope.token
     ws.send(
@@ -61,7 +66,10 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
       $scope.showLogin(true)
     else
       $scope.user = user
-      $scope.wsLogin()
+      ws.send(
+        event: 'base.init'
+      )
+      #$scope.wsLogin()
       #ws.send(
       #  Command: 'init'
       #)
@@ -81,7 +89,7 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
     )
     i.result.then((user)->
       $scope.user = angular.copy(user)
-      $scope.user.token = md5((new Date()).format('yyyy-MM-dd') + md5(md5($scope.user.token)))
+      $scope.user.token = md5((new Date()).format('yyyy-MM-dd') + md5(md5($scope.user.password)))
       lss.set('user', $scope.user)
       $scope.wsLogin()
       #if init

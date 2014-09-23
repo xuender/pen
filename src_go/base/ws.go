@@ -90,7 +90,7 @@ func send(ws *websocket.Conn,event string, data string){
   if err != nil {
     log.Errorf("JSON编码错误: %s", data)
   }
-  log.Debugf("发送的数据: %s",string(s))
+  log.Debugf("send: 发送的数据: %s",string(s))
   if err = websocket.JSON.Send(ws, string(s)); err != nil {
     log.Error("不能发送消息到客户端")
   }
