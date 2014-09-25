@@ -206,7 +206,7 @@ func init() {
 		"登出": 登出,
 		"人数": 人数,
 	}).Debug("枚举")
-	RegisterMeta(Meta{"基本功能", "base", "用户管理、身份认证", []int{
+	RegisterMeta(Meta{"基本功能", "base", "用户管理、身份认证", []uint{
 		登录,
 		登出,
 		人数,
