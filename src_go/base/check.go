@@ -3,7 +3,7 @@ package base
 import (
 	"../utils"
 	"errors"
-	log "github.com/cihub/seelog"
+  log "github.com/Sirupsen/logrus"
 	"os"
 	"path/filepath"
 )
@@ -27,9 +27,13 @@ func CheckFiles() error {
 			}
 			md5v, err := utils.Md5File(path)
 			if err == nil {
-				log.Debugf("check:%s", path)
+        log.WithFields(log.Fields{
+          "path": path,
+        }).Info("检查")
 				if v != md5v {
-					log.Errorf("文件 %s 不匹配", path)
+          log.WithFields(log.Fields{
+            "path": path,
+          }).Error("检查不匹配")
 					ret++
 				}
 			}

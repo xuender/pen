@@ -5,7 +5,7 @@ import (
   "../utils"
   "code.google.com/p/go.net/websocket"
   "code.google.com/p/go-uuid/uuid"
-  log "github.com/cihub/seelog"
+  log "github.com/Sirupsen/logrus"
   "encoding/json"
   "unsafe"
   "fmt"
@@ -53,11 +53,14 @@ func WsHandler(ws *websocket.Conn) {
       RemoveOb(ws)
       delete(onlines, ws)
       updateCount()
-      log.Error("关闭连接, 在线用户:%d", len(onlines))
-      // TODO 删除用户事件
+      log.WithFields(log.Fields{
+        "在线用户数": len(onlines),
+      }).Info("管理连接")
       break
     }
-    log.Debugf("接收信息: %s", reply)
+    log.WithFields(log.Fields{
+      "消息": reply,
+    }).Debug("接收信息")
     session, ok := onlines[ws]
     if !ok {
       //user, err := FindUser(reply.Message.Name)
@@ -71,7 +74,11 @@ func WsHandler(ws *websocket.Conn) {
       // 开始关注在线人数
       RegisterOb(人数, ws)
     }else{
-      log.Debugf("收到消息,来自:%s Token:%s message.Token:%s", session.Nick, session.Token, reply.Message.Token)
+      log.WithFields(log.Fields{
+        "用户": session.Nick,
+        "Token": session.Token,
+        "messageToken": reply.Message.Token,
+      }).Debug("接收到信息")
       if session.Token == reply.Message.Token {
         // 消息处理
         Event(reply.Message.Code, reply.Message.Event, &reply.Message.Data, ws)
@@ -97,9 +104,13 @@ func send(ws *websocket.Conn, code string, event int, data string){
   m.Tract = session.Tract
   s, err := json.Marshal(m);
   if err != nil {
-    log.Errorf("JSON编码错误: %s", data)
+    log.WithFields(log.Fields{
+      "JSON": data,
+    }).Error("JSON编码错误")
   }
-  log.Debugf("send: 发送的数据: %s",string(s))
+  log.WithFields(log.Fields{
+    "数据": string(s),
+  }).Debug("send: 发送数据")
   if err = websocket.JSON.Send(ws, string(s)); err != nil {
     log.Error("不能发送消息到客户端")
   }
@@ -115,20 +126,30 @@ type LoginData struct {
 // 客户端访问服务器获取管道(Tract),生成[令牌(Token)]=md5(管道track+当天加密密码)
 // 客户端将令牌Token保存在本地存储，每次访问提交令牌，直到令牌过期
 func loginEvent(data *string, ws *websocket.Conn, session Session){
-  log.Debugf("loginEvent(%s)",*data)
+  log.WithFields(log.Fields{
+    "data": *data,
+  }).Debug("loginEvent")
   var ld LoginData
   if err := json.Unmarshal([]byte(*data), &ld); err == nil {
-    log.Debugf("[ %s ] 开始登录", ld.Nick)
+    log.WithFields(log.Fields{
+      "nick": ld.Nick,
+    }).Debug("开始登录")
     if user, e := FindUser(ld.Nick); e == nil{
       token := utils.Md5(session.Tract + utils.Md5(time.Now().Format("2006-01-02") + user.Password))
-      log.Debugf("服务器token: %s, 客户端token: %s", token, ld.Token)
+      log.WithFields(log.Fields{
+        "服务器token": token,
+        "客户端token": ld.Token,
+      }).Debug("令牌验证")
       if token == ld.Token {
         session.Nick = user.Nick
         session.Token = token
         session.User = user
         session.IsLogin = true
         onlines[ws] = session
-        log.Debugf("ws.Token:%s, session.Token:%s", onlines[ws].Token, session.Token)
+        log.WithFields(log.Fields{
+          "ws.Token": onlines[ws].Token,
+          "session.Token": session.Token,
+        }).Debug("令牌验证成功")
         updateCount()
       }else{
         send(ws, Code, 登录, "ERROR_PASSWORD")
@@ -169,9 +190,12 @@ const (
 )
 // 初始化
 func init(){
-  log.Debugf("登录: %d", 登录)
-  log.Debugf("登出: %d", 登出)
-  log.Debugf("人数: %d", 人数)
+  log.SetLevel(log.DebugLevel)
+  log.WithFields(log.Fields{
+    "登录": 登录,
+    "登出": 登出,
+    "人数": 人数,
+  }).Debug("枚举")
   RegisterMeta(Meta{"基本功能", "base", "用户管理、身份认证", []int{
     登录,
     登出,
@@ -240,9 +264,15 @@ func init(){
 
   // 事件触发
   func Event(code string, event int, data *string, ws *websocket.Conn){
-    log.Debugf("Event(%s, %d, %s)", code, event, *data)
+    log.WithFields(log.Fields{
+      "code": code,
+      "event": event,
+      "data": *data,
+    }).Debug("Event")
     events, ok := commands[code]
-    log.Debug(ok)
+    log.WithFields(log.Fields{
+      "ok": ok,
+    }).Debug("命令查找")
     if ok{
       command, ok := events[event]
       if ok{
