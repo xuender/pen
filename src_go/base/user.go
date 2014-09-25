@@ -19,10 +19,5 @@ func FindUser(nick string) (User, error){
   if nick == "ender" {
     return  User{Id:2, Nick:"ender", Email:"xxx@xxx", Password:"d9b1d7db4cd6e70935368a1efb10e377"}, nil
   }
-  //for _, v := range users{
-  //  if v.Nick == name{
-  //    return v, nil
-  //  }
-  //}
   return User{}, errors.New("用户没有找到")
 }
