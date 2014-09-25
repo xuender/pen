@@ -157,8 +157,18 @@ func logoutEvent(data *string, ws *websocket.Conn, session Session){
   //session.User = nil
   //TODO 人数统计修改
 }
+// 功能定义
+const (
+  登录 = iota
+  登出
+  人数
+)
 // 初始化
 func init(){
+  RegisterMeta(Meta{"基本功能", "base", "用户管理、身份认证", []int{
+    登录,
+    登出,
+    人数}})
   RegisterEvent("base.login", loginEvent)
   RegisterEvent("base.logout", logoutEvent)
 }
