@@ -69,7 +69,7 @@ func WsHandler(ws *websocket.Conn) {
       // 服务器要求客户端发送登陆信息
       send(ws, Code, 登录, "login")
       // 开始关注在线人数
-      RegisterOb("base.count", ws)
+      RegisterOb(人数, ws)
     }else{
       log.Debugf("收到消息,来自:%s Token:%s message.Token:%s", session.Nick, session.Token, reply.Message.Token)
       if session.Token == reply.Message.Token {
@@ -148,7 +148,7 @@ func updateCount(){
       count++
     }
   }
-  ObUpdate("base.count", Code, 人数, fmt.Sprintf("%d", count))
+  ObUpdate(人数, Code, 人数, fmt.Sprintf("%d", count))
 }
 // 登出
 func logoutEvent(data *string, ws *websocket.Conn, session Session){
@@ -176,80 +176,80 @@ func init(){
     登录,
     登出,
     人数}})
-  RegisterEvent(Code, 登录, loginEvent)
-  RegisterEvent(Code, 登出, logoutEvent)
-}
-// 交互观察者
-var obmap = make(map[string]*set.Set)
-// 取消观察者
-func RemoveNameOb(name string, ws *websocket.Conn){
-  s, ok := obmap[name]
-  if ok{
-    s.Remove(ws)
+    RegisterEvent(Code, 登录, loginEvent)
+    RegisterEvent(Code, 登出, logoutEvent)
   }
-}
-// 取消观察者
-func RemoveOb(ws *websocket.Conn){
-  for _, s := range obmap{
-    s.Remove(ws)
-  }
-}
-// 注册观察者
-func RegisterOb(name string, ws *websocket.Conn){
-  s, ok := obmap[name]
-  if ok{
-    s.Add(ws)
-  }else{
-    s = set.New()
-    s.Add(ws)
-    obmap[name] = s
-  }
-}
-// 消息分发
-func ObUpdate(name string, code string, event int, data string){
-  s, ok := obmap[name]
-  if ok {
-    l := s.Size()
-    items := s.List()
-    for i:=0;i<l;i++{
-      ws, ok := items[i].(*websocket.Conn)
-      if ok{
-        send(ws, code, event, data)
-      }
-    }
-  }
-}
-// ws事件
-var commands = make(map[string]map[int]func(*string, *websocket.Conn, Session))
-
-// 注册事件
-func RegisterEvent(code string, event int,command func(*string, *websocket.Conn, Session)){
-  if reflect.TypeOf(command).Kind() != reflect.Func {
-    panic("command must be a callable func")
-    return
-  }
-  events, ok := commands[code]
-  if !ok {
-    events = make(map[int]func(*string, *websocket.Conn, Session))
-    events[event] = command
-    commands[code] = events
-  }else{
-    events[event] = command
-  }
-}
-
-// 事件触发
-func Event(code string, event int, data *string, ws *websocket.Conn){
-  log.Debugf("Event(%s, %d, %s)", code, event, *data)
-  events, ok := commands[code]
-  log.Debug(ok)
-  if ok{
-    command, ok := events[event]
+  // 交互观察者
+  var obmap = make(map[int]*set.Set)
+  // 取消观察者
+  func RemoveNameOb(name int, ws *websocket.Conn){
+    s, ok := obmap[name]
     if ok{
-      session, ok := onlines[ws]
-      if ok{
-        command(data, ws, session)
+      s.Remove(ws)
+    }
+  }
+  // 取消观察者
+  func RemoveOb(ws *websocket.Conn){
+    for _, s := range obmap{
+      s.Remove(ws)
+    }
+  }
+  // 注册观察者
+  func RegisterOb(name int, ws *websocket.Conn){
+    s, ok := obmap[name]
+    if ok{
+      s.Add(ws)
+    }else{
+      s = set.New()
+      s.Add(ws)
+      obmap[name] = s
+    }
+  }
+  // 消息分发
+  func ObUpdate(name int, code string, event int, data string){
+    s, ok := obmap[name]
+    if ok {
+      l := s.Size()
+      items := s.List()
+      for i:=0;i<l;i++{
+        ws, ok := items[i].(*websocket.Conn)
+        if ok{
+          send(ws, code, event, data)
+        }
       }
     }
   }
-}
+  // ws事件
+  var commands = make(map[string]map[int]func(*string, *websocket.Conn, Session))
+
+  // 注册事件
+  func RegisterEvent(code string, event int,command func(*string, *websocket.Conn, Session)){
+    if reflect.TypeOf(command).Kind() != reflect.Func {
+      panic("command must be a callable func")
+      return
+    }
+    events, ok := commands[code]
+    if !ok {
+      events = make(map[int]func(*string, *websocket.Conn, Session))
+      events[event] = command
+      commands[code] = events
+    }else{
+      events[event] = command
+    }
+  }
+
+  // 事件触发
+  func Event(code string, event int, data *string, ws *websocket.Conn){
+    log.Debugf("Event(%s, %d, %s)", code, event, *data)
+    events, ok := commands[code]
+    log.Debug(ok)
+    if ok{
+      command, ok := events[event]
+      if ok{
+        session, ok := onlines[ws]
+        if ok{
+          command(data, ws, session)
+        }
+      }
+    }
+  }
