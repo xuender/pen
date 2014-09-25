@@ -15,8 +15,10 @@ import (
 
 // 消息内容
 type WsMessage struct {
-  // 消息事件
-  Event   string    `json:"event"`
+  // 功能
+  Code    string    `json:"code"`
+  // 消息
+  Event   int       `json:"event"`
   // 消息体
   Data    string    `json:"data"`
   // 身份认证令牌
@@ -65,16 +67,16 @@ func WsHandler(ws *websocket.Conn) {
       session.Token = uuid.NewUUID().String()
       onlines[ws] = session
       // 服务器要求客户端发送登陆信息
-      send(ws, "base.login", "login")
+      send(ws, Code, 登录, "login")
       // 开始关注在线人数
       RegisterOb("base.count", ws)
     }else{
       log.Debugf("收到消息,来自:%s Token:%s message.Token:%s", session.Nick, session.Token, reply.Message.Token)
       if session.Token == reply.Message.Token {
         // 消息处理
-        Event(reply.Message.Event, &reply.Message.Data, ws)
+        Event(reply.Message.Code, reply.Message.Event, &reply.Message.Data, ws)
       }else{
-        Event("base.login", &reply.Message.Data, ws)
+        Event(Code, 登录, &reply.Message.Data, ws)
       }
     }
     //user, ok := onlines[ws]
@@ -86,8 +88,9 @@ func WsHandler(ws *websocket.Conn) {
   }
 }
 // 发送消息
-func send(ws *websocket.Conn,event string, data string){
+func send(ws *websocket.Conn, code string, event int, data string){
   var m WsMessage
+  m.Code = code
   m.Event = event
   m.Data = data
   session := onlines[ws]
@@ -112,7 +115,7 @@ type LoginData struct {
 // 客户端访问服务器获取管道(Tract),生成[令牌(Token)]=md5(管道track+当天加密密码)
 // 客户端将令牌Token保存在本地存储，每次访问提交令牌，直到令牌过期
 func loginEvent(data *string, ws *websocket.Conn, session Session){
-  log.Info(*data)
+  log.Debugf("loginEvent(%s)",*data)
   var ld LoginData
   if err := json.Unmarshal([]byte(*data), &ld); err == nil {
     log.Debugf("[ %s ] 开始登录", ld.Nick)
@@ -128,13 +131,13 @@ func loginEvent(data *string, ws *websocket.Conn, session Session){
         log.Debugf("ws.Token:%s, session.Token:%s", onlines[ws].Token, session.Token)
         updateCount()
       }else{
-        send(ws, "base.login", "ERROR_PASSWORD")
+        send(ws, Code, 登录, "ERROR_PASSWORD")
       }
     }else{
-      send(ws, "base.login", "ERROR_NICK")
+      send(ws, Code, 登录, "ERROR_NICK")
     }
   }else{
-    send(ws, "base.login", "ERROR_DATA")
+    send(ws, Code, 登录, "ERROR_DATA")
   }
 }
 // 统计在线人数
@@ -145,7 +148,7 @@ func updateCount(){
       count++
     }
   }
-  ObUpdate("base.count", "base.count", fmt.Sprintf("%d", count))
+  ObUpdate("base.count", Code, 人数, fmt.Sprintf("%d", count))
 }
 // 登出
 func logoutEvent(data *string, ws *websocket.Conn, session Session){
@@ -162,15 +165,19 @@ const (
   登录 = iota
   登出
   人数
+  Code = "base"
 )
 // 初始化
 func init(){
+  log.Debugf("登录: %d", 登录)
+  log.Debugf("登出: %d", 登出)
+  log.Debugf("人数: %d", 人数)
   RegisterMeta(Meta{"基本功能", "base", "用户管理、身份认证", []int{
     登录,
     登出,
     人数}})
-  RegisterEvent("base.login", loginEvent)
-  RegisterEvent("base.logout", logoutEvent)
+  RegisterEvent(Code, 登录, loginEvent)
+  RegisterEvent(Code, 登出, logoutEvent)
 }
 // 交互观察者
 var obmap = make(map[string]*set.Set)
@@ -199,7 +206,7 @@ func RegisterOb(name string, ws *websocket.Conn){
   }
 }
 // 消息分发
-func ObUpdate(name string, event string, data string){
+func ObUpdate(name string, code string, event int, data string){
   s, ok := obmap[name]
   if ok {
     l := s.Size()
@@ -207,30 +214,42 @@ func ObUpdate(name string, event string, data string){
     for i:=0;i<l;i++{
       ws, ok := items[i].(*websocket.Conn)
       if ok{
-        send(ws, event, data)
+        send(ws, code, event, data)
       }
     }
   }
 }
 // ws事件
-var commands = make(map[string]func(*string, *websocket.Conn, Session))
+var commands = make(map[string]map[int]func(*string, *websocket.Conn, Session))
 
 // 注册事件
-func RegisterEvent(event string,command func(*string, *websocket.Conn, Session)){
+func RegisterEvent(code string, event int,command func(*string, *websocket.Conn, Session)){
   if reflect.TypeOf(command).Kind() != reflect.Func {
     panic("command must be a callable func")
     return
   }
-  commands[event] = command
+  events, ok := commands[code]
+  if !ok {
+    events = make(map[int]func(*string, *websocket.Conn, Session))
+    events[event] = command
+    commands[code] = events
+  }else{
+    events[event] = command
+  }
 }
 
 // 事件触发
-func Event(event string, data *string, ws *websocket.Conn){
-  command, ok := commands[event]
+func Event(code string, event int, data *string, ws *websocket.Conn){
+  log.Debugf("Event(%s, %d, %s)", code, event, *data)
+  events, ok := commands[code]
+  log.Debug(ok)
   if ok{
-    session, ok := onlines[ws]
+    command, ok := events[event]
     if ok{
-      command(data, ws, session)
+      session, ok := onlines[ws]
+      if ok{
+        command(data, ws, session)
+      }
     }
   }
 }

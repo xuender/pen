@@ -12,7 +12,10 @@ angular.module('pen', [
   #'angularFileUpload'
   #'textAngular'
 ])
-
+CONST =
+  login: 0
+  logout: 1
+  count: 2
 PenCtrl = ($scope, $modal, ngSocket, lss)->
   ### 主控制器 ###
   $scope.token = ''
@@ -35,15 +38,18 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
     $scope.userCount = data
     console.info 'userCount: ', data
 
-  commands['base.login'] = $scope.eventLogin
-  commands['base.count'] = $scope.eventCount
+  commands["base.#{CONST.login}"] = $scope.eventLogin
+  commands["base.#{CONST.count}"] = $scope.eventCount
   ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
   ws.onMessage((data)->
     dmsg = JSON.parse(JSON.parse(data.data))
     $scope.tract = dmsg.tract
-    console.debug("ws onMessage:#{dmsg.event} data:#{dmsg.data}")
-    if dmsg.event of commands
-      commands[dmsg.event](dmsg.data)
+    console.debug("ws onMessage:#{dmsg.code}.#{dmsg.event} data:#{dmsg.data}")
+    k = "#{dmsg.code}.#{dmsg.event}"
+    console.info "k:#{k}"
+    console.info commands
+    if k of commands
+      commands[k](dmsg.data)
   )
 
   $scope.send = ->
@@ -62,7 +68,8 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
     $scope.token = md5($scope.tract + $scope.user.token)
     v.token = $scope.token
     ws.send(
-      event: 'base.login'
+      code: 'base'
+      event: CONST.login
       data: JSON.stringify(v)
       token: $scope.token
     )
@@ -76,7 +83,8 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
     else
       $scope.user = user
     ws.send(
-      event: 'base.init'
+      code: 'base'
+      event: 100
     )
   $scope.showLogin = (init = false)->
     ### 显示登录窗口 ###
@@ -114,7 +122,8 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
       token: ''
     lss.remove('user')
     ws.send(
-      event: 'base.logout'
+      code: 'base'
+      event: CONST.logout
       token: $scope.token
     )
     #$scope.messages = []
