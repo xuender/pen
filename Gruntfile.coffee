@@ -26,7 +26,7 @@ module.exports = (grunt)->
         files: [
           cwd: 'src'
           src: [
-            '*.html'
+            '**/*.html'
           ]
           dest: 'src_go/public'
           filter: 'isFile'
@@ -52,6 +52,18 @@ module.exports = (grunt)->
             'angular.js'
             'angular.min.js'
             'angular.min.js.map'
+          ]
+          dest: 'src_go/public/js'
+          expand: true
+          filter: 'isFile'
+        ]
+      angular_route:
+        files: [
+          cwd: 'bower_components/angular-route/'
+          src: [
+            'angular-route.js'
+            'angular-route.min.js'
+            'angular-route.min.js.map'
           ]
           dest: 'src_go/public/js'
           expand: true
@@ -186,8 +198,11 @@ module.exports = (grunt)->
       main:
         files:
           'src_go/public/js/main.min.js': [
-            'src/js/main.coffee'
-            'src/js/login.coffee'
+            'src/js/utils.coffee'
+            'src/js/base.coffee'
+            'src/js/pen.coffee'
+            'src/base/js/login.coffee'
+            'src/base/js/home.coffee'
           ]
     uglify:
       main:
@@ -210,12 +225,12 @@ module.exports = (grunt)->
         tasks: ['copy:css']
       html:
         files: [
-          'src/*.html'
+          'src/**/*.html'
         ]
         tasks: ['copy:root']
       coffee:
         files: [
-          'src/js/*.coffee'
+          'src/**/*.coffee'
         ]
         tasks: ['coffee']
     karma:

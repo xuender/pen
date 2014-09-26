@@ -4,24 +4,17 @@ Copyright (C) 2014 ender xu <xuender@gmail.com>
 
 Distributed under terms of the MIT license.
 ###
-angular.module('pen', [
-  'ui.bootstrap'
-  'ngSocket'
-  'LocalStorageModule'
-  #'hotkey'
-  #'angularFileUpload'
-  #'textAngular'
-])
 CONST =
   login: 0
   logout: 1
   count: 2
-PenCtrl = ($scope, $modal, ngSocket, lss)->
+PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
   ### 主控制器 ###
   $scope.token = ''
   commands = {}
   $scope.eventLogin = (data)->
     # 登陆事件
+    $scope.isLogin = false
     if data == 'ERROR_PASSWORD'
       $scope.showLogin()
     if data == 'ERROR_NICK'
@@ -31,40 +24,33 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
         $scope.wsLogin()
       else
         $scope.showLogin(true)
+  # 用户数量
   $scope.userCount = 0
-
   $scope.eventCount = (data)->
-    # 在线用户数
+    # 在线用户数修改事件
     $scope.userCount = data
-    console.info 'userCount: ', data
-
+    $log.info 'userCount: ', data
   commands["base.#{CONST.login}"] = $scope.eventLogin
   commands["base.#{CONST.count}"] = $scope.eventCount
+  # 消息处理
   ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
   ws.onMessage((data)->
     dmsg = JSON.parse(JSON.parse(data.data))
     $scope.tract = dmsg.tract
-    console.debug("ws onMessage:#{dmsg.code}.#{dmsg.event} data:#{dmsg.data}")
+    $log.debug("ws onMessage:#{dmsg.code}.#{dmsg.event} data:#{dmsg.data}")
     k = "#{dmsg.code}.#{dmsg.event}"
-    console.info "k:#{k}"
-    console.info commands
+    $log.info "k:#{k}"
+    $log.info commands
     if k of commands
       commands[k](dmsg.data)
   )
-
-  $scope.send = ->
-    ### 发送消息 ###
-    console.info('test')
-    ws.send(
-      Event: 'test'
-      Data: 'xxdfdfdfa'
-    )
+  # 登录状态
   $scope.isLogin = false
   $scope.wsLogin = ->
     #登录
-    console.info('login', $scope.user)
+    $log.info('login', $scope.user)
     v = $scope.user
-    console.info($scope.tract)
+    $log.info($scope.tract)
     $scope.token = md5($scope.tract + $scope.user.token)
     v.token = $scope.token
     ws.send(
@@ -73,6 +59,7 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
       data: JSON.stringify(v)
       token: $scope.token
     )
+    $scope.isLogin = true
   $scope.init = ->
     ### 初始化 ###
     user = lss.get('user')
@@ -109,7 +96,7 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
       lss.set('user', $scope.user)
       $scope.wsLogin()
     ,->
-      console.info '取消'
+      $log.info '取消'
     )
   $scope.edit = ->
     ### 编辑用户 ###
@@ -129,28 +116,11 @@ PenCtrl = ($scope, $modal, ngSocket, lss)->
     #$scope.messages = []
     $scope.showLogin(true)
   $scope.init()
+
 PenCtrl.$inject = [
   '$scope'
+  '$log'
   '$modal'
   'ngSocket'
   'localStorageService'
 ]
-Date.prototype.format = (format)->
-  o =
-    "M+": this.getMonth()+1 #month 
-    "d+": this.getDate() #day 
-    "h+": this.getHours() #hour 
-    "m+": this.getMinutes() #minute 
-    "s+": this.getSeconds() #second 
-    "q+": Math.floor((this.getMonth()+3)/3) #quarter 
-    "S": this.getMilliseconds() #millisecond 
-
-  if(/(y+)/.test(format))
-    format = format.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length))
-  for k of o
-    if new RegExp("(#{k})").test(format)
-      v = o[k]
-      if RegExp.$1.length!=1
-        v = ("00"+ o[k]).substr((""+ o[k]).length)
-      format = format.replace(RegExp.$1, v)
-  format

@@ -20,7 +20,7 @@
   ],
   "dependencies": {
     "jquery": "~2.1.1",
-    "angular": "~1.2.21",
+    "angular": "~1.2.x",
     "bootstrap": "~3.2.0",
     "angular-bootstrap": "~0.11.0",
     "ngSocket": "~0.2.1",
@@ -30,6 +30,7 @@
     "textAngular": "~1.2.2",
     "font-awesome": "~4.1.0",
     "jquery-resize": "*",
-    "blueimp-md5": "~1.1.0"
+    "blueimp-md5": "~1.1.0",
+    "angular-route": "~1.2.x"
   }
 }
