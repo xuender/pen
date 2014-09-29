@@ -15,6 +15,9 @@ ng\:form {
   display: block;
 }
 
+.ng-table {
+  border: 1px solid #000;
+}
 body {
   background: white;
   color: black;
@@ -22,22 +25,22 @@ body {
 
 /*
 .drop-box {
-  border: 5px solid white;
-  overflow: auto;
+border: 5px solid white;
+overflow: auto;
 }
 .dragover {
-  border: 5px dashed blue;
+border: 5px dashed blue;
 }
 .ta-scroll-window.form-control{
-  min-height: 120px;
-  height: 120px;
+min-height: 120px;
+height: 120px;
 }
 .ta-editor {
-    min-height: 300px;
-    height: auto;
-    overflow: auto;
-    font-family: inherit;
-    font-size: 100%;
-    margin: 10px 0;
+min-height: 300px;
+height: auto;
+overflow: auto;
+font-family: inherit;
+font-size: 100%;
+margin: 10px 0;
 }
-*/
+ */

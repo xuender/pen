@@ -9,6 +9,7 @@ penApp = angular.module('pen', [
   'ui.bootstrap'
   'ngSocket'
   'LocalStorageModule'
+  'ngTable'
   #'hotkey'
   #'angularFileUpload'
   #'textAngular'

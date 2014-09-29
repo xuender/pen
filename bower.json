@@ -31,6 +31,7 @@
     "font-awesome": "~4.1.0",
     "jquery-resize": "*",
     "blueimp-md5": "~1.1.0",
-    "angular-route": "~1.2.x"
+    "angular-route": "~1.2.x",
+    "ng-table": "~0.3.3"
   }
 }

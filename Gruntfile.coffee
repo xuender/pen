@@ -69,6 +69,28 @@ module.exports = (grunt)->
           expand: true
           filter: 'isFile'
         ]
+      ng_table_js:
+        files: [
+          cwd: 'bower_components/ng-table/'
+          src: [
+            'ng-table.js'
+            'ng-table.min.js'
+            'ng-table.map'
+          ]
+          dest: 'src_go/public/js'
+          expand: true
+          filter: 'isFile'
+        ]
+      ng_table_css:
+        files: [
+          cwd: 'bower_components/ng-table/'
+          src: [
+            'ng-table.min.css'
+          ]
+          dest: 'src_go/public/css'
+          expand: true
+          filter: 'isFile'
+        ]
       storage:
         files: [
           cwd: 'bower_components/angular-local-storage/'

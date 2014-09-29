@@ -34,9 +34,9 @@ func UserRead(nick string) (User, error) {
 // 查找所有用户
 func UserAll() []User {
 	var users []User
-	ender.Password = ""
+	//ender.Password = ""
 	users = append(users, ender)
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 200; i++ {
 		users = append(users, User{Id: int64(3 + i), Nick: fmt.Sprintf("user:%d", i), Email: "xxx@xxx", Password: ""})
 	}
 	return users
