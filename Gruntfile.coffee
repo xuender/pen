@@ -203,6 +203,7 @@ module.exports = (grunt)->
             'src/js/pen.coffee'
             'src/base/js/login.coffee'
             'src/base/js/home.coffee'
+            'src/base/js/user.coffee'
           ]
     uglify:
       main:

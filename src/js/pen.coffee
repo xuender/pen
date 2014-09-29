@@ -8,6 +8,7 @@ CONST =
   login: 0
   logout: 1
   count: 2
+  userAll: 3
 PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
   ### 主控制器 ###
   $scope.token = ''
@@ -30,17 +31,19 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
     # 在线用户数修改事件
     $scope.userCount = data
     $log.info 'userCount: ', data
-  commands["base.#{CONST.login}"] = $scope.eventLogin
-  commands["base.#{CONST.count}"] = $scope.eventCount
+  $scope.registerEvent = (code, event, cb)->
+    # 注册事件
+    commands["#{code}.#{event}"] = cb
+  $scope.registerEvent('base', CONST.login, $scope.eventLogin)
+  $scope.registerEvent('base', CONST.count, $scope.eventCount)
   # 消息处理
   ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
   ws.onMessage((data)->
-    dmsg = JSON.parse(JSON.parse(data.data))
+    dmsg = JSON.parse(data.data)
     $scope.tract = dmsg.tract
     $log.debug("ws onMessage:#{dmsg.code}.#{dmsg.event} data:#{dmsg.data}")
     k = "#{dmsg.code}.#{dmsg.event}"
     $log.info "k:#{k}"
-    $log.info commands
     if k of commands
       commands[k](dmsg.data)
   )
@@ -53,12 +56,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
     $log.info($scope.tract)
     $scope.token = md5($scope.tract + $scope.user.token)
     v.token = $scope.token
-    ws.send(
-      code: 'base'
-      event: CONST.login
-      data: JSON.stringify(v)
-      token: $scope.token
-    )
+    $scope.send('base', CONST.login, JSON.stringify(v))
     $scope.isLogin = true
   $scope.init = ->
     ### 初始化 ###
@@ -108,13 +106,24 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
       nick: '来宾'
       token: ''
     lss.remove('user')
-    ws.send(
-      code: 'base'
-      event: CONST.logout
-      token: $scope.token
-    )
-    #$scope.messages = []
+    $scope.send('base', CONST.logout)
     $scope.showLogin(true)
+  $scope.send = (code, event, data=null)->
+    # 发送数据
+    $log.debug('code:%s, event:%d', code, event)
+    if data
+      ws.send(
+        code: code
+        event: event
+        data: data
+        token: $scope.token
+      )
+    else
+      ws.send(
+        code: code
+        event: event
+        token: $scope.token
+      )
   $scope.init()
 
 PenCtrl.$inject = [

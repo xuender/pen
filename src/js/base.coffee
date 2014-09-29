@@ -20,7 +20,7 @@ penApp.config(['$routeProvider', ($routeProvider)->
       controller: 'HomeCtrl'
     ).when('/users',
       templateUrl: 'base/users.html'
-      controller: 'HomeCtrl'
+      controller: 'UserCtrl'
     ).otherwise({
       redirectTo: '/'
     })

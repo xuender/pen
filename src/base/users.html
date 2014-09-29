@@ -1,7 +1,10 @@
-<div class="row-fluid">
-  <ul>
-    <li>    
-      测试
-    </li>
-  </ul>
-</div>
+<table class="table table-condensed">
+  <tr>
+    <th>昵称</th>
+    <th>邮箱</th>
+  </tr>
+  <tr ng-repeat="user in users">
+    <td>{{ user.Nick }}</td>
+    <td>{{ user.Email }}</td>
+  </tr>
+</table>

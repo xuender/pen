@@ -66,7 +66,7 @@ func WsHandler(ws *websocket.Conn) {
 		}).Debug("接收信息")
 		session, ok := onlines[ws]
 		if !ok {
-			//user, err := FindUser(reply.Message.Name)
+			//user, err := UserRead(reply.Message.Name)
 			session.IsLogin = false
 			session.Nick = "来宾"
 			session.Tract = fmt.Sprintf("%d", unsafe.Pointer(ws))
@@ -100,16 +100,16 @@ func send(ws *websocket.Conn, code string, event int, data string) {
 	m.Data = data
 	session := onlines[ws]
 	m.Tract = session.Tract
-	s, err := json.Marshal(m)
-	if err != nil {
-		log.WithFields(log.Fields{
-			"JSON": data,
-		}).Error("JSON编码错误")
-	}
+	//s, err := json.Marshal(m)
+	//if err != nil {
+	//  log.WithFields(log.Fields{
+	//    "JSON": data,
+	//  }).Error("JSON编码错误")
+	//}
 	log.WithFields(log.Fields{
-		"数据": string(s),
+		"数据": m,
 	}).Debug("send: 发送数据")
-	if err = websocket.JSON.Send(ws, string(s)); err != nil {
+	if err := websocket.JSON.Send(ws, m); err != nil {
 		log.Error("不能发送消息到客户端")
 	}
 }
@@ -136,7 +136,7 @@ func loginEvent(data *string, ws *websocket.Conn, session Session) {
 		log.WithFields(log.Fields{
 			"nick": ld.Nick,
 		}).Debug("开始登录")
-		if user, e := FindUser(ld.Nick); e == nil {
+		if user, e := UserRead(ld.Nick); e == nil {
 			token := utils.Md5(session.Tract + utils.Md5(time.Now().Format("2006-01-02")+user.Password))
 			log.WithFields(log.Fields{
 				"服务器token": token,
@@ -190,27 +190,8 @@ func logoutEvent(data *string, ws *websocket.Conn, session Session) {
 	//TODO 人数统计修改
 }
 
-// 功能定义
-const (
-	登录 = iota
-	登出
-	人数
-	Code = "base"
-)
-
 // 初始化
 func init() {
-	log.SetLevel(log.DebugLevel)
-	log.WithFields(log.Fields{
-		"登录": 登录,
-		"登出": 登出,
-		"人数": 人数,
-	}).Debug("枚举")
-	RegisterMeta(Meta{"基本功能", "base", "用户管理、身份认证", []uint{
-		登录,
-		登出,
-		人数,
-	}})
 	RegisterEvent(Code, 登录, loginEvent)
 	RegisterEvent(Code, 登出, logoutEvent)
 }

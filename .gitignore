@@ -33,3 +33,4 @@ bower_components
 src_go/public
 src_go/base/checkData.go
 
+*.vim
