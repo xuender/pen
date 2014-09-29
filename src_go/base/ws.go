@@ -152,6 +152,7 @@ func loginEvent(data *string, ws *websocket.Conn, session Session) {
 					"ws.Token":      onlines[ws].Token,
 					"session.Token": session.Token,
 				}).Debug("令牌验证成功")
+				send(ws, Code, 登录, "OK")
 				updateCount()
 			} else {
 				send(ws, Code, 登录, "ERROR_PASSWORD")

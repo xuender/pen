@@ -27,7 +27,9 @@ UserCtrl = ($scope, $log, ngTableParams, $filter)->
         $defer.resolve(nData.slice((params.page() - 1) * params.count(), params.page() * params.count()))
     )
   $scope.registerEvent('base', CONST.userAll, $scope.userAll)
-  $scope.send('base', CONST.userAll)
+  $scope.ready(->
+    $scope.send('base', CONST.userAll)
+  )
 
 UserCtrl.$inject = [
   '$scope'

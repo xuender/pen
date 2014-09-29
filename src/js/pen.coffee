@@ -17,6 +17,11 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
   $scope.eventLogin = (data)->
     # 登陆事件
     $scope.isLogin = false
+    if data == 'OK'
+      $scope.isLogin = true
+      for r in readies
+        console.info 'run ready'
+        r()
     if data == 'ERROR_PASSWORD'
       $scope.showLogin()
     if data == 'ERROR_NICK'
@@ -58,7 +63,6 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
     $scope.token = md5($scope.tract + $scope.user.token)
     v.token = $scope.token
     $scope.send('base', CONST.login, JSON.stringify(v))
-    $scope.isLogin = true
   $scope.init = ->
     ### 初始化 ###
     user = lss.get('user')
@@ -125,6 +129,14 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
         event: event
         token: $scope.token
       )
+  readies = []
+  $scope.ready = (f)->
+    # 准备好执行的命令
+    console.info 'ready'
+    if $scope.isLogin
+      f()
+    else
+      readies.push(f)
   $scope.init()
 
 PenCtrl.$inject = [
