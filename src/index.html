@@ -4,6 +4,7 @@
     <link href="css/bootstrap.min.css" rel="stylesheet"/>
     <link href="css/font-awesome.min.css" rel="stylesheet"/>
     <link href="css/ng-table.min.css" rel="stylesheet"/>
+    <link href="css/main.css" rel="stylesheet"/>
     <meta charset="utf-8" />
     <title>平台</title>
     <meta name="renderer" content="webkit"/>
@@ -50,11 +51,12 @@
       </div><!-- container-fluid -->
     </nav>
     <div class="container-fluid">
-      <div class="col-xs-3" ng-include="'base/left.html'">
-      </div><!-- 3 -->
-      <div class="col-xs-9">
-        <div ng-view></div>
+      <div ng-class="{'col-xs-9':showLeft, 'col-xs-12':!showLeft}" class="right-bar">
+          <div class="resize-bar pull-right" title="关闭侧栏" ng-click="showLeft=!showLeft">
+          </div>
+          <div ng-view></div>
       </div><!-- 9 -->
+      <div class="col-xs-3 left-bar" ng-show="showLeft" ng-include="'base/left.html'" />
     </div><!-- container-fluid -->
     <script src="js/jquery.min.js"></script>
     <script src="js/md5.min.js"></script>

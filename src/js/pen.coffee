@@ -12,6 +12,7 @@ CONST =
 PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
   ### 主控制器 ###
   $scope.token = ''
+  $scope.showLeft = true
   commands = {}
   $scope.eventLogin = (data)->
     # 登陆事件

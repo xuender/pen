@@ -23,6 +23,26 @@ body {
   color: black;
 }
 
+.right-bar {
+  padding-right: 10px;
+}
+.left-bar {
+  padding-left: 5px;
+}
+.resize-bar {
+  position: absolute;
+  right: 0px;
+  padding: 0px;
+  margin: 0px;
+  width: 4px;
+  height: 500px;
+  /*
+  z-index: 2;
+  */
+  cursor: pointer;
+  background-color: #BBB;
+}
+
 /*
 .drop-box {
 border: 5px solid white;
