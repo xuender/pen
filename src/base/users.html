@@ -1,7 +1,13 @@
-<table ng-table="tableParams"  class="table">
+<div class="btn-group btn-group-lg">
+  <button class="btn btn-default">增加用户</button>
+</div>
+<table ng-table="tableParams" show-filter="true" class="table">
   <tr ng-repeat="user in $data">
     <td data-title="'ID'" sortable="'Id'" filter="{'Id': 'text'}">
-      <span>{{ user.Id }}</span>
+      <span ng-if="!user.$edit">{{ user.Id }}</span>
+      <div ng-if="user.$edit">
+        <input class="form-control" type="text" ng-model="user.Id" />
+      </div>
     </td>
     <td data-title="'昵称'" sortable="'Nick'" filter="{'Nick': 'text'}">
       <span ng-if="!user.$edit">{{ user.Nick }}</span>
@@ -17,6 +23,7 @@
     </td>
     <td data-title="'操作'" width="200">
       <button ng-if="!user.$edit" class="btn btn-default btn-sm" ng-click="user.$edit = true">编辑</button>
+      <button class="btn btn-warning btn-sm">禁用</button>
       <button ng-if="user.$edit" class="btn btn-primary btn-sm" ng-click="user.$edit = false">保存</button>
     </td>
   </tr>
