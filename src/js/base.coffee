@@ -4,7 +4,7 @@ Copyright (C) 2014 ender xu <xuender@gmail.com>
 
 Distributed under terms of the MIT license.
 ###
-penApp = angular.module('pen', [
+angular.module('pen', [
   'ngRoute'
   'ui.bootstrap'
   'ngSocket'
@@ -13,16 +13,16 @@ penApp = angular.module('pen', [
   #'hotkey'
   #'angularFileUpload'
   #'textAngular'
-])
-penApp.config(['$routeProvider', ($routeProvider)->
-  $routeProvider.
-    when('/',
+]).config(['$routeProvider', ($routeProvider)->
+  $routeProvider.when('/',
       templateUrl: 'base/home.html'
       controller: 'HomeCtrl'
+      name: '首页'
     ).when('/users',
       templateUrl: 'base/users.html'
       controller: 'UserCtrl'
-    ).otherwise({
+      name: '用户管理'
+    ).otherwise(
       redirectTo: '/'
-    })
+    )
 ])

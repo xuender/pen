@@ -4,8 +4,8 @@ Copyright (C) 2014 ender xu <xuender@gmail.com>
 
 Distributed under terms of the MIT license.
 ###
-UserCtrl = ($scope, $log, ngTableParams, $filter)->
-  $log.info '用户管理'
+UserCtrl = ($scope, $log, $route, ngTableParams, $filter)->
+  $scope.addHistory($route.current)
   $scope.users = []
   $scope.userAll = (data)->
     # 获取所有用户
@@ -34,6 +34,7 @@ UserCtrl = ($scope, $log, ngTableParams, $filter)->
 UserCtrl.$inject = [
   '$scope'
   '$log'
+  '$route'
   'ngTableParams'
   '$filter'
 ]

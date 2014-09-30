@@ -1,4 +1,11 @@
 <tabset>
+   <tab heading="历史">
+     <ul>
+       <li ng-repeat="h in history">
+         <a href="#{{ h.path }}" title="{{ h.time }}">{{ h.name }}</a>
+       </li>
+     </ul>
+   </tab>
    <tab heading="用户">用户列表</tab>
    <tab heading="功能">功能列表</tab>
    <tab heading="帮助">帮助信息</tab>

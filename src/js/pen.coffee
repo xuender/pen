@@ -137,6 +137,17 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
       f()
     else
       readies.push(f)
+  lss.bind($scope, 'history', [])
+  $scope.addHistory = (route)->
+    # 增加历史操作
+    $log.info route.$$route.name
+    $scope.history.unshift(
+      name: route.$$route.name
+      path: route.$$route.originalPath
+      time: (new Date()).format('yyyy-MM-dd hh:mm:ss')
+    )
+    if $scope.history.length > 10
+      $scope.history.pop()
   $scope.init()
 
 PenCtrl.$inject = [
