@@ -5,15 +5,21 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+  "time"
 	log "github.com/Sirupsen/logrus"
 )
 
 // 用户
 type User struct {
-	Id       int64
-	Nick     string
-	Email    string
-	Password string
+  Id        int64
+  // 性别
+  Gender    int64
+  // 昵称
+	Nick      string
+	Email     string
+	Password  string
+  Created   time.Time
+  Updated   time.Time
 }
 
 // 用户密码教研
@@ -58,4 +64,6 @@ func userAllEvent(data *string, ws *websocket.Conn, session Session) {
 
 func init() {
 	RegisterEvent(Code, 用户列表, userAllEvent)
+  db := GetDb()
+  db.AutoMigrate(&User{})
 }
