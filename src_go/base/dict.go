@@ -1,5 +1,12 @@
 package base
 
+import (
+	"code.google.com/p/go.net/websocket"
+	"encoding/json"
+	"fmt"
+	log "github.com/Sirupsen/logrus"
+)
+
 // 字典数据
 type Dict struct {
 	BaseObject
@@ -30,38 +37,88 @@ func (u *Dict) BeforeSave() (err error) {
 	} else {
 		dv.Ver++
 	}
+	dictMap[u.Type] = dv.Ver
 	db.Save(&dv)
 	return
 }
 
+var dictMap = make(map[string]int)
+
+//字典版本对比事件
+func dictVerEvent(data *string, ws *websocket.Conn, session Session) {
+	m := make(map[string]int)
+	json.Unmarshal([]byte(*data), &m)
+	b := false
+	for k, v := range dictMap {
+		u, ok := m[k]
+		if ok && u == v {
+			continue
+		}
+		b = true
+		go dictSend(k, ws)
+	}
+	if b {
+		send(ws, Code, 字典版本, dictMap)
+	}
+}
+func dictSend(t string, ws *websocket.Conn) {
+	log.WithFields(log.Fields{
+		"type": t,
+	}).Debug("发送字典")
+	var ds []Dict
+	db.Where("type = ?", t).Find(&ds)
+	m := make(map[string]string)
+	for _, d := range ds {
+		m[fmt.Sprintf("%d", d.Id)] = d.Title
+	}
+	d, err := json.Marshal(m)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"JSON": m,
+			"err":  err,
+		}).Error("JSON编码错误")
+		return
+	}
+	var tm TypeMessage
+	tm.Type = t
+	tm.Data = string(d)
+	send(ws, Code, DICT, tm)
+}
+
 // 初始化
 func init() {
+	RegisterEvent(Code, 字典版本, dictVerEvent)
 	db.AutoMigrate(&Dict{}, &DictVer{})
 	db.Model(&Dict{}).AddUniqueIndex("idx_dict_code", "type", "code")
 	db.Model(&DictVer{}).AddUniqueIndex("idx_dict_ver", "type")
-	db.Create(&Dict{
-		Type:  "type",
-		Code:  "gender",
-		Title: "性别",
-	})
-	db.Create(&Dict{
-		Type:  "type",
-		Code:  "province",
-		Title: "省份",
-	})
-	db.Create(&Dict{
-		Type:  "gender",
-		Code:  "M",
-		Title: "男",
-	})
-	db.Create(&Dict{
-		Type:  "gender",
-		Code:  "F",
-		Title: "女",
-	})
-	db.Create(&Dict{
-		Type:  "province",
-		Code:  "SD",
-		Title: "山东省",
-	})
+	var dvs []DictVer
+	db.Find(&dvs)
+	for _, dv := range dvs {
+		dictMap[dv.Type] = dv.Ver
+	}
+	//db.Create(&Dict{
+	//	Type:  "type",
+	//	Code:  "gender",
+	//	Title: "性别",
+	//})
+	//db.Create(&Dict{
+	//	Type:  "type",
+	//	Code:  "province",
+	//	Title: "省份",
+	//})
+	//db.Create(&Dict{
+	//	Type:  "gender",
+	//	Code:  "M",
+	//	Title: "男",
+	//})
+	//db.Create(&Dict{
+	//	Type:  "gender",
+	//	Code:  "F",
+	//	Title: "女",
+	//})
+	//db.Create(&Dict{
+	//	Type:  "province",
+	//	Code:  "SD",
+	//	Title: "山东省",
+	//})
 }

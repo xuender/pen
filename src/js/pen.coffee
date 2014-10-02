@@ -4,12 +4,7 @@ Copyright (C) 2014 ender xu <xuender@gmail.com>
 
 Distributed under terms of the MIT license.
 ###
-CONST =
-  login: 0
-  logout: 1
-  count: 2
-  userAll: 3
-PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
+PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q)->
   ### 主控制器 ###
   $scope.token = ''
   $scope.showLeft = true
@@ -19,6 +14,8 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
     $scope.isLogin = false
     if data == 'OK'
       $scope.isLogin = true
+      # 获取版本
+      $scope.send('base', CONST.dictVer, JSON.stringify($scope.dictVer))
       for r in readies
         console.info 'run ready'
         r()
@@ -42,6 +39,29 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
     commands["#{code}.#{event}"] = cb
   $scope.registerEvent('base', CONST.login, $scope.eventLogin)
   $scope.registerEvent('base', CONST.count, $scope.eventCount)
+  $scope.registerEvent('base', CONST.dictVer, (data)->
+    $scope.dictVer = JSON.parse(data)
+    for k of $scope.dictVer
+      lss.bind($scope, 'dict_' + k, {})
+  )
+  $scope.registerEvent('base', CONST.dict, (data)->
+    $log.debug("dict....."+data)
+    d = JSON.parse(data)
+    $scope['dict_' + d.type] = d.data
+  )
+  $scope.getDict = (type)->
+    # 获取字典
+    def = $q.defer()
+    ret = []
+    for k, v of $scope['dict_' + type]
+      ret.push(
+        id: k
+        title: v
+      )
+    $log.debug ret
+    def.resolve(ret)
+    $log.debug def
+    def
   # 消息处理
   ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
   ws.onMessage((data)->
@@ -65,6 +85,9 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
     $scope.send('base', CONST.login, JSON.stringify(v))
   $scope.init = ->
     ### 初始化 ###
+    lss.bind($scope, 'dictVer', {})
+    for k of $scope.dictVer
+      lss.bind($scope, 'dict_' + k, {})
     user = lss.get('user')
     if user == null
       $scope.user =
@@ -156,4 +179,5 @@ PenCtrl.$inject = [
   '$modal'
   'ngSocket'
   'localStorageService'
+  '$q'
 ]

@@ -4,6 +4,13 @@ Copyright (C) 2014 ender xu <xuender@gmail.com>
 
 Distributed under terms of the MIT license.
 ###
+CONST =
+  login:    0
+  logout:   1
+  count:    2
+  userAll:  3
+  dict:     4
+  dictVer:  5
 angular.module('pen', [
   'ngRoute'
   'ui.bootstrap'

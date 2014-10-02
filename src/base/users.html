@@ -3,8 +3,8 @@
 </div>
 <table ng-table="tableParams" show-filter="true" class="table">
   <tr ng-repeat="user in $data">
-    <td data-title="'ID'" sortable="'Id'" filter="{'Id': 'text'}">
-      <span ng-if="!user.$edit">{{ user.Id }}</span>
+    <td data-title="'性别'" sortable="'Gender'" filter="{'Gender': 'select'}" filter-data="getDict('gender')">
+      <span ng-if="!user.$edit">{{ dict_gender[user.Gender] }}</span>
       <div ng-if="user.$edit">
         <input class="form-control" type="text" ng-model="user.Id" />
       </div>

@@ -11,6 +11,12 @@ import (
 	"unsafe"
 )
 
+// 类型消息
+type TypeMessage struct {
+	Type string `json:"type"`
+	Data string `json:"data"`
+}
+
 // 消息内容
 type WsMessage struct {
 	// 功能
