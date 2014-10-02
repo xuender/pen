@@ -60,7 +60,7 @@ func init() {
 		e := User{
 			Nick:     "ender",
 			Email:    "xxx@xxx",
-			Password: "d9b1d7db4cd6e70935368a1efb10e377",
+			Password: "40b0dada4577cd2a27d93ee392fa9a4f",
 		}
 		log.WithFields(log.Fields{
 			"id": e.Id,

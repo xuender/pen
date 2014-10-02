@@ -95,7 +95,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss)->
     )
     i.result.then((user)->
       $scope.user.nick= user.nick
-      $scope.user.token = md5((new Date()).format('yyyy-MM-dd') + md5(md5(user.password)))
+      $scope.user.token = md5((new Date()).format('yyyy-MM-dd') + md5(md5(user.nick + user.password)))
       lss.set('user', $scope.user)
       $scope.wsLogin()
     ,->
