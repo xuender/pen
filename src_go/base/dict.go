@@ -3,7 +3,6 @@ package base
 import (
 	"code.google.com/p/go.net/websocket"
 	"encoding/json"
-	"fmt"
 	log "github.com/Sirupsen/logrus"
 )
 
@@ -69,7 +68,7 @@ func dictSend(t string, ws *websocket.Conn) {
 	db.Where("type = ?", t).Find(&ds)
 	m := make(map[string]string)
 	for _, d := range ds {
-		m[fmt.Sprintf("%d", d.Id)] = d.Title
+		m[d.Code] = d.Title
 	}
 	d, err := json.Marshal(m)
 	if err != nil {

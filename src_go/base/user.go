@@ -12,7 +12,7 @@ import (
 type User struct {
 	BaseObject
 	// 性别
-	Gender int64
+	Gender string `sql:type:char(1)`
 	// 昵称
 	Nick     string
 	Email    string
@@ -61,6 +61,7 @@ func init() {
 	if count == 0 {
 		e := User{
 			Nick:     "ender",
+			Gender:   "M",
 			Email:    "xxx@xxx",
 			Password: "40b0dada4577cd2a27d93ee392fa9a4f",
 		}

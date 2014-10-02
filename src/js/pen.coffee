@@ -58,9 +58,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q)->
         id: k
         title: v
       )
-    $log.debug ret
     def.resolve(ret)
-    $log.debug def
     def
   # 消息处理
   ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
