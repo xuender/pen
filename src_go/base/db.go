@@ -2,23 +2,36 @@ package base
 import (
   "github.com/jinzhu/gorm"
   _ "github.com/lib/pq"
+  "time"
 )
 
+// 基础对象
+type BaseObject struct {
+  Id        int64
+  Created   time.Time
+  Updated   time.Time
+}
+
+func (u *BaseObject) BeforeCreate() (err error) {
+  u.Created = time.Now()
+  u.Updated = u.Created
+  return
+}
+
+func (u *BaseObject) BeforeUpdate() (err error) {
+  u.Updated = time.Now()
+  return
+}
 
 var db gorm.DB
-var dbInit = true
-// 获取数据库对象
-func GetDb() gorm.DB{
-  if dbInit {
-    dbInit = false
-    d, err := gorm.Open("postgres", "user=postgres dbname=go password=xcy123 sslmode=disable")
-    if err != nil {
-      panic(err)
-    }
-    db.DB().SetMaxIdleConns(10)
-    db.DB().SetMaxOpenConns(100)
-    d.SingularTable(true)
-    db = d
+func init(){
+  d, err := gorm.Open("postgres", "user=postgres dbname=go password=xcy123 sslmode=disable")
+  if err != nil {
+    panic(err)
   }
-  return db
+  d.LogMode(true)
+  d.DB().SetMaxIdleConns(10)
+  d.DB().SetMaxOpenConns(100)
+  d.SingularTable(true)
+  db=d
 }

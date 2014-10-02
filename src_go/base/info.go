@@ -14,7 +14,6 @@ const (
 )
 
 func init() {
-	log.SetLevel(log.DebugLevel)
 	log.WithFields(log.Fields{
 		"登录":   登录,
 		"登出":   登出,
