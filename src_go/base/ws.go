@@ -153,7 +153,7 @@ func loginEvent(data *string, ws *websocket.Conn, session Session) {
       "nick": ld.Nick,
     }).Debug("开始登录")
     if user, e := UserRead(ld.Nick); e == nil {
-      token := utils.Md5(session.Tract + utils.Md5(time.Now().Format("2006-01-02")+user.Password))
+      token := user.getToken(session.Tract)
       log.WithFields(log.Fields{
         "服务器token": token,
         "客户端token": ld.Token,

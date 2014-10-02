@@ -4,6 +4,8 @@ import (
   "code.google.com/p/go.net/websocket"
   "errors"
   log "github.com/Sirupsen/logrus"
+	"../utils"
+  "time"
 )
 
 // 用户
@@ -18,8 +20,12 @@ type User struct {
 }
 
 // 用户密码教研
-func (u User) check(password string) bool {
+func (u *User) check(password string) bool {
   return u.Password == password
+}
+// 根据track计算token
+func (u *user) getToken(track string) string{
+  return utils.Md5(tract + utils.Md5(time.Now().Format("2006-01-02") + u.Password))
 }
 
 // 查找用户
@@ -45,11 +51,10 @@ func userAllEvent(data *string, ws *websocket.Conn, session Session) {
 func init() {
   RegisterEvent(Code, 用户列表, userAllEvent)
   // 数据库初始化
-  //db := GetDb()
   db.AutoMigrate(&User{})
   db.Model(&User{}).AddUniqueIndex("idx_user_nick", "nick")
   // 创建管理员
-  var count int64
+  var count int
   db.Model(User{}).Count(&count)
   if count == 0 {
     e := User{

@@ -23,6 +23,7 @@ func (u *BaseObject) BeforeUpdate() (err error) {
   return
 }
 
+// 全局数据库操作对象
 var db gorm.DB
 func init(){
   d, err := gorm.Open("postgres", "user=postgres dbname=go password=xcy123 sslmode=disable")
