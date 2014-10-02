@@ -48,6 +48,8 @@ func userAllEvent(data *string, ws *websocket.Conn, session Session) {
 	db.Find(&users)
 	send(ws, Code, 用户列表, users)
 }
+
+// 初始化
 func init() {
 	RegisterEvent(Code, 用户列表, userAllEvent)
 	// 数据库初始化
