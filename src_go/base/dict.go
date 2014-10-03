@@ -81,7 +81,7 @@ func dictSend(t string, ws *websocket.Conn) {
 	var tm TypeMessage
 	tm.Type = t
 	tm.Data = string(d)
-	send(ws, Code, DICT, tm)
+	send(ws, Code, 字典, tm)
 }
 
 // 初始化
