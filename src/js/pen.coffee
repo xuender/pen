@@ -39,15 +39,11 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q)->
     commands["#{code}.#{event}"] = cb
   $scope.registerEvent('base', CONST.login, $scope.eventLogin)
   $scope.registerEvent('base', CONST.count, $scope.eventCount)
-  $scope.registerEvent('base', CONST.dictVer, (data)->
-    $scope.dictVer = JSON.parse(data)
-    for k of $scope.dictVer
-      lss.bind($scope, 'dict_' + k, {})
-  )
   $scope.registerEvent('base', CONST.dict, (data)->
     $log.debug("dict....."+data)
     d = JSON.parse(data)
-    $scope['dict_' + d.type] = d.data
+    $scope.dictVer[d.type] = d.ver
+    $scope['dict_' + d.type] = d.dict
   )
   $scope.getDict = (type)->
     # 获取字典

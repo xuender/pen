@@ -14,6 +14,7 @@ import (
 // 类型消息
 type TypeMessage struct {
 	Type string `json:"type"`
+	Msg  string `json:"msg"`
 	Data string `json:"data"`
 }
 

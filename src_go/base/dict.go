@@ -3,6 +3,7 @@ package base
 import (
 	"code.google.com/p/go.net/websocket"
 	"encoding/json"
+	//	"fmt"
 	log "github.com/Sirupsen/logrus"
 )
 
@@ -26,6 +27,13 @@ type DictVer struct {
 	Ver int
 }
 
+// 字典信息
+type DictMessage struct {
+	Type string            `json:"type"`
+	Ver  int               `json:"ver"`
+	Dict map[string]string `json:"data"`
+}
+
 // 保存字典，修改字典版本
 func (u *Dict) BeforeSave() (err error) {
 	var dv DictVer
@@ -47,17 +55,12 @@ var dictMap = make(map[string]int)
 func dictVerEvent(data *string, ws *websocket.Conn, session Session) {
 	m := make(map[string]int)
 	json.Unmarshal([]byte(*data), &m)
-	b := false
 	for k, v := range dictMap {
 		u, ok := m[k]
 		if ok && u == v {
 			continue
 		}
-		b = true
 		go dictSend(k, ws)
-	}
-	if b {
-		send(ws, Code, 字典版本, dictMap)
 	}
 }
 func dictSend(t string, ws *websocket.Conn) {
@@ -70,17 +73,20 @@ func dictSend(t string, ws *websocket.Conn) {
 	for _, d := range ds {
 		m[d.Code] = d.Title
 	}
-	d, err := json.Marshal(m)
-	if err != nil {
-		log.WithFields(log.Fields{
-			"JSON": m,
-			"err":  err,
-		}).Error("JSON编码错误")
-		return
-	}
-	var tm TypeMessage
+	//d, err := json.Marshal(m)
+	//if err != nil {
+	//  log.WithFields(log.Fields{
+	//    "JSON": m,
+	//    "err":  err,
+	//  }).Error("JSON编码错误")
+	//  return
+	//}
+	var dv DictVer
+	db.Where("type = ?", t).First(&dv)
+	var tm DictMessage
 	tm.Type = t
-	tm.Data = string(d)
+	tm.Dict = m
+	tm.Ver = dv.Ver
 	send(ws, Code, 字典, tm)
 }
 
