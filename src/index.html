@@ -31,6 +31,7 @@
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <p class="navbar-text">
+              <i class="fa" ng-class="{'fa-circle-o': like, 'fa-circle': !like}"></i>
               <span ng-class="{'text-success':isLogin, 'text-danger':!isLogin}">
                 登录状态
                 <i class="fa" ng-class="{'fa-check':isLogin,'fa-times':!isLogin}"></i>

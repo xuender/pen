@@ -61,8 +61,10 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q)->
     def.resolve(ret)
     def
   # 消息处理
+  $scope.like = false
   ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
   ws.onMessage((data)->
+    $scope.like = !$scope.like
     dmsg = JSON.parse(data.data)
     $scope.tract = dmsg.tract
     $log.debug("ws onMessage:#{dmsg.code}.#{dmsg.event} data:#{dmsg.data}")
@@ -75,24 +77,23 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q)->
   $scope.isLogin = false
   $scope.wsLogin = ->
     #登录
-    $log.info('login', $scope.user)
-    v = $scope.user
-    $log.info($scope.tract)
+    $log.debug('login', $scope.user)
+    $log.debug($scope.tract)
     $scope.token = md5($scope.tract + $scope.user.token)
-    v.token = $scope.token
-    $scope.send('base', CONST.login, JSON.stringify(v))
+    $scope.send('base', CONST.login, JSON.stringify(
+      'nick': $scope.user.nick
+      'token': $scope.token
+    ))
   $scope.init = ->
     ### 初始化 ###
     lss.bind($scope, 'dictVer', {})
     for k of $scope.dictVer
       lss.bind($scope, 'dict_' + k, {})
-    user = lss.get('user')
-    if user == null
-      $scope.user =
-        nick: '来宾'
-        token: ''
-    else
-      $scope.user = user
+
+    lss.bind($scope, 'user',
+      nick: '来宾'
+      token: ''
+    )
     ws.send(
       code: 'base'
       event: 100
@@ -117,7 +118,6 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q)->
     i.result.then((user)->
       $scope.user.nick= user.nick
       $scope.user.token = md5((new Date()).format('yyyy-MM-dd') + md5(md5(user.nick + user.password)))
-      lss.set('user', $scope.user)
       $scope.wsLogin()
     ,->
       $log.info '取消'
@@ -128,10 +128,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q)->
 
   $scope.logout = ->
     ### 登出 ###
-    $scope.user =
-      nick: '来宾'
-      token: ''
-    lss.remove('user')
+    $scope.user.token = ''
     $scope.send('base', CONST.logout)
     $scope.showLogin(true)
   $scope.send = (code, event, data=null)->
