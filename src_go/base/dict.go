@@ -31,7 +31,22 @@ type DictVer struct {
 type DictMessage struct {
 	Type string            `json:"type"`
 	Ver  int               `json:"ver"`
-	Dict map[string]string `json:"data"`
+	Dict map[string]string `json:"dict"`
+}
+
+// 查询字典信息
+func (dm *DictMessage) read() {
+	var ds []Dict
+	db.Where("type = ?", dm.Type).Find(&ds)
+	m := make(map[string]string)
+	for _, d := range ds {
+		log.Debug(d.Title)
+		m[d.Code] = d.Title
+	}
+	var dv DictVer
+	db.Where("type = ?", dm.Type).First(&dv)
+	dm.Dict = m
+	dm.Ver = dv.Ver
 }
 
 // 保存字典，修改字典版本
@@ -47,6 +62,19 @@ func (u *Dict) BeforeSave() (err error) {
 	dictMap[u.Type] = dv.Ver
 	db.Save(&dv)
 	return
+}
+
+// 字典保存后自动推送所有客户端
+func (u *Dict) publish() {
+	var tm DictMessage
+	tm.Type = u.Type
+	tm.read()
+	//tm.Dict[u.Code] = u.Title
+	for ws, session := range onlines {
+		if session.IsLogin {
+			send(ws, Code, 字典, tm)
+		}
+	}
 }
 
 var dictMap = make(map[string]int)
@@ -67,32 +95,44 @@ func dictSend(t string, ws *websocket.Conn) {
 	log.WithFields(log.Fields{
 		"type": t,
 	}).Debug("发送字典")
-	var ds []Dict
-	db.Where("type = ?", t).Find(&ds)
-	m := make(map[string]string)
-	for _, d := range ds {
-		m[d.Code] = d.Title
-	}
-	//d, err := json.Marshal(m)
-	//if err != nil {
-	//  log.WithFields(log.Fields{
-	//    "JSON": m,
-	//    "err":  err,
-	//  }).Error("JSON编码错误")
-	//  return
-	//}
-	var dv DictVer
-	db.Where("type = ?", t).First(&dv)
 	var tm DictMessage
 	tm.Type = t
-	tm.Dict = m
-	tm.Ver = dv.Ver
+	tm.read()
 	send(ws, Code, 字典, tm)
+}
+
+// 查看字典
+func getDictEvent(data *string, ws *websocket.Conn, session Session) {
+	var ds []Dict
+	db.Where("type = ?", data).Find(&ds)
+	send(ws, Code, 查看字典, ds)
+}
+
+// 修改字典
+func updateDictEvent(data *string, ws *websocket.Conn, session Session) {
+	var d Dict
+	json.Unmarshal([]byte(*data), &d)
+	log.WithFields(log.Fields{
+		"ID": d.Id,
+	}).Debug("update Dict Event")
+	if d.Id == 0 {
+		db.Save(&d)
+		d.publish()
+	} else {
+		var o Dict
+		db.First(&o, d.Id)
+		o.Code = d.Code
+		o.Title = d.Title
+		db.Save(&o)
+		o.publish()
+	}
 }
 
 // 初始化
 func init() {
 	RegisterEvent(Code, 字典版本, dictVerEvent)
+	RegisterEvent(Code, 查看字典, getDictEvent)
+	RegisterEvent(Code, 修改字典, updateDictEvent)
 	db.AutoMigrate(&Dict{}, &DictVer{})
 	db.Model(&Dict{}).AddUniqueIndex("idx_dict_code", "type", "code")
 	db.Model(&DictVer{}).AddUniqueIndex("idx_dict_ver", "type")

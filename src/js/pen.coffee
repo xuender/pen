@@ -4,7 +4,7 @@ Copyright (C) 2014 ender xu <xuender@gmail.com>
 
 Distributed under terms of the MIT license.
 ###
-PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q)->
+PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
   ### 主控制器 ###
   $scope.token = ''
   $scope.showLeft = true
@@ -42,6 +42,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q)->
   $scope.registerEvent('base', CONST.dict, (data)->
     $log.debug("dict....."+data)
     d = JSON.parse(data)
+    $log.debug(d)
     $scope.dictVer[d.type] = d.ver
     $scope['dict_' + d.type] = d.dict
   )
@@ -131,6 +132,9 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q)->
     # 发送数据
     $log.debug('code:%s, event:%d', code, event)
     if data
+      if (typeof data != 'string') || data.constructor != String
+        data = JSON.stringify(data)
+      $log.debug 'send data:%s', data
       ws.send(
         code: code
         event: event
@@ -152,12 +156,14 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q)->
     else
       readies.push(f)
   lss.bind($scope, 'history', [])
-  $scope.addHistory = (route)->
+  $scope.addHistory = (route, subName=null)->
     # 增加历史操作
-    $log.info route.$$route.name
+    name = route.$$route.name
+    if subName
+      name = "#{name} [ #{subName} ]"
     $scope.history.unshift(
-      name: route.$$route.name
-      path: route.$$route.originalPath
+      name: name
+      path: $location.$$path
       time: (new Date()).format('yyyy-MM-dd hh:mm:ss')
     )
     if $scope.history.length > 10
@@ -171,4 +177,5 @@ PenCtrl.$inject = [
   'ngSocket'
   'localStorageService'
   '$q'
+  '$location'
 ]

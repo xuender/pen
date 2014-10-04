@@ -5,12 +5,14 @@ Copyright (C) 2014 ender xu <xuender@gmail.com>
 Distributed under terms of the MIT license.
 ###
 CONST =
-  login:    0
-  logout:   1
-  count:    2
-  userAll:  3
-  dict:     4
-  dictVer:  5
+  login:       0
+  logout:      1
+  count:       2
+  userAll:     3
+  dict:        4
+  dictVer:     5
+  getDict:     6
+  updateDict:  7
 angular.module('pen', [
   'ngRoute'
   'ui.bootstrap'
@@ -29,6 +31,14 @@ angular.module('pen', [
       templateUrl: 'base/users.html'
       controller: 'UserCtrl'
       name: '用户管理'
+    ).when('/dict',
+      templateUrl: 'base/dict.html'
+      controller: 'DictCtrl'
+      name: '字典管理'
+    ).when('/dict/:type',
+      templateUrl: 'base/dict.html'
+      controller: 'DictCtrl'
+      name: '字典明细'
     ).otherwise(
       redirectTo: '/'
     )

@@ -226,6 +226,7 @@ module.exports = (grunt)->
             'src/base/js/login.coffee'
             'src/base/js/home.coffee'
             'src/base/js/user.coffee'
+            'src/base/js/dict.coffee'
           ]
     uglify:
       main:

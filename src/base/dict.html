@@ -1,0 +1,58 @@
+<ol class="breadcrumb">
+  <li><a href="#">首页</a></li>
+  <li>系统管理</li>
+  <li ng-hide="type=='type'"><a href="#/dict">字典管理</a></li>
+  <li class="active" ng-show="type=='type'">字典管理</li>
+  <li class="active" ng-hide="type=='type'">{{ dict_type[type] }}</li>
+</ol>
+<ul class="col-xs-2 nav nav-pills nav-stacked">
+  <li ng-class="{'active':type=='type'}">
+    <a href="#/dict">
+      字典
+      <span class="badge pull-right" ng-show="type == 'type'">{{ dict.length }}</span>
+    </a>
+  </li>
+  <li ng-repeat="(k, v) in dict_type" ng-class="{'active':type==k}">
+    <a href="#/dict/{{ k }}">
+      {{ v }}
+      <span class="badge pull-right" ng-show="k==type">{{ dict.length }}</span>
+    </a>
+  </li>
+</ul>
+<div class="col-xs-10">
+<div class="btn-group btn-group-lg">
+  <button class="btn btn-default" ng-click="add()">增加</button>
+</div>
+<table ng-table="tableParams" show-filter="true" class="table">
+  <tr ng-repeat="d in $data">
+    <td data-title="'代码'" sortable="'Code'" filter="{'Code': 'text'}">
+      <span ng-if="!d.$edit">{{ d.Code }}</span>
+      <div ng-if="d.$edit">
+        <input class="form-control" type="text" ng-model="d.Code" />
+      </div>
+    </td>
+    <td data-title="'文字'" sortable="'Title'" filter="{'Title': 'text'}">
+      <span ng-if="!d.$edit">{{ d.Title }}</span>
+      <div ng-if="d.$edit">
+        <input class="form-control" type="text" ng-model="d.Title" />
+      </div>
+    </td>
+    <td data-title="'创建'" sortable="'Created'" class="date">
+      {{ d.Created | date:"yyyy-MM-dd H:mm:ss" }}
+    </td>
+    <td data-title="'修改'" sortable="'Updated'" class="date">
+      {{ d.Updated | date:"yyyy-MM-dd H:mm:ss" }}
+    </td>
+    <td data-title="'操作'" width="140">
+      <button class="btn btn-default btn-sm"
+      ng-if="!d.$edit" ng-click="d.$edit = true">编辑</button>
+      <!--
+           <button class="btn btn-warning btn-sm"
+      ng-if="d.$edit">禁用</button>
+      -->
+      <button class="btn btn-primary btn-sm"
+      ng-if="d.$edit" ng-click="save(d)">保存</button>
+    </td>
+  </tr>
+</table>
+</div><!-- 10 -->
