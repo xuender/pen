@@ -3,6 +3,7 @@ package base
 import (
 	"../utils"
 	"code.google.com/p/go.net/websocket"
+	"encoding/json"
 	"errors"
 	log "github.com/Sirupsen/logrus"
 	"time"
@@ -49,9 +50,42 @@ func userAllEvent(data *string, ws *websocket.Conn, session Session) {
 	send(ws, Code, 用户列表, users)
 }
 
+func updateUserEvent(data *string, ws *websocket.Conn, session Session) {
+	//TODO 权限认证
+	var u User
+	json.Unmarshal([]byte(*data), &u)
+	log.WithFields(log.Fields{
+		"ID": u.Id,
+	}).Debug("修改用户")
+	if u.Id == 0 {
+		e := db.Save(&u).Error
+		if e == nil {
+			//d.publish()
+			send(ws, Code, 修改用户, "ok")
+		} else {
+			log.Debug(e)
+			send(ws, Code, 消息, e)
+		}
+	} else {
+		var o User
+		db.First(&o, u.Id)
+		o.Email = u.Email
+		o.Gender = u.Gender
+		e := db.Save(&o).Error
+		if e == nil {
+			//o.publish()
+			send(ws, Code, 修改用户, "ok")
+		} else {
+			log.Debug(e)
+			send(ws, Code, 消息, e)
+		}
+	}
+}
+
 // 初始化
 func init() {
 	RegisterEvent(Code, 用户列表, userAllEvent)
+	RegisterEvent(Code, 修改用户, updateUserEvent)
 	// 数据库初始化
 	db.AutoMigrate(&User{})
 	db.Model(&User{}).AddUniqueIndex("idx_user_nick", "nick")

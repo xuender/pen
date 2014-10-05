@@ -10,10 +10,11 @@ CONST =
   logout:      2
   count:       3
   userAll:     4
-  dict:        5
-  dictVer:     6
-  getDict:     7
-  updateDict:  8
+  updateUser:  5
+  dict:        6
+  dictVer:     7
+  getDict:     8
+  updateDict:  9
 angular.module('pen', [
   'ngRoute'
   'ui.bootstrap'
