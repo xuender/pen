@@ -1,13 +1,14 @@
 <ul class="nav navbar-nav">
   <!-- <li><a href ng-click="test()" >测试</a></li> -->
-  <li class="dropdown">
+  <li class="dropdown" ng-repeat="ms in menus | orderBy:['order']">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown"
     ng-disabled="!isLogin">
-      系统管理 <span class="caret"></span>
+      {{ ms.name }} <span class="caret"></span>
     </a>
     <ul class="dropdown-menu" role="menu">
-      <li><a href="#/users">用户管理</a></li>
-      <li><a href="#/dict">字典管理</a></li>
+      <li ng-repeat="m in ms.routes">
+        <a ng-if="m.menu"  href="#{{ m.url }}">{{ m.name }}</a>
+      </li>
     </ul>
   </li>
 </ul>

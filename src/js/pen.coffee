@@ -6,6 +6,7 @@ Distributed under terms of the MIT license.
 ###
 PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
   ### 主控制器 ###
+  $scope.menus = MENUS
   $scope.token = ''
   $scope.showLeft = true
   commands = {}
