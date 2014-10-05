@@ -119,6 +119,7 @@ func updateDictEvent(data *string, ws *websocket.Conn, session Session) {
 		e := db.Save(&d).Error
 		if e == nil {
 			d.publish()
+			send(ws, Code, 修改字典, "ok")
 		} else {
 			log.Debug(e)
 			send(ws, Code, 消息, e)
@@ -131,6 +132,7 @@ func updateDictEvent(data *string, ws *websocket.Conn, session Session) {
 		e := db.Save(&o).Error
 		if e == nil {
 			o.publish()
+			send(ws, Code, 修改字典, "ok")
 		} else {
 			log.Debug(e)
 			send(ws, Code, 消息, e)
