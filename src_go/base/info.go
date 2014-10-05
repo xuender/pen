@@ -6,7 +6,8 @@ import (
 )
 
 const (
-	登录 = iota
+	消息 = iota
+	登录
 	登出
 	人数
 	用户列表
@@ -19,6 +20,7 @@ const (
 
 func init() {
 	log.WithFields(log.Fields{
+		"消息":   消息,
 		"登录":   登录,
 		"登出":   登出,
 		"人数":   人数,

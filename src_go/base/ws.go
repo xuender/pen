@@ -5,9 +5,12 @@ import (
 	"code.google.com/p/go.net/websocket"
 	"encoding/json"
 	"fmt"
+	//	"errors"
 	log "github.com/Sirupsen/logrus"
+	"github.com/lib/pq"
 	"gopkg.in/fatih/set.v0"
 	"reflect"
+	"strings"
 	"unsafe"
 )
 
@@ -50,6 +53,9 @@ type Session struct {
 
 // 在线用户
 var onlines = make(map[*websocket.Conn]Session)
+
+// 错误信息
+var errorMessage = make(map[string]string)
 
 // 接收ws消息
 func WsHandler(ws *websocket.Conn) {
@@ -100,10 +106,32 @@ func WsHandler(ws *websocket.Conn) {
 // 发送消息
 func send(ws *websocket.Conn, code string, event int, data interface{}) {
 	var str string
+	log.Debug(data)
 	switch data.(type) {
+	case *pq.Error:
+		log.Debug("*pq.Error")
+		var tm TypeMessage
+		tm.Type = "msg"
+		tm.Data = "error"
+		tm.Msg = "未知错误"
+		for k, v := range errorMessage {
+			if strings.Contains(data.(*pq.Error).Message, k) {
+				tm.Msg = v
+			}
+		}
+		d, err := json.Marshal(tm)
+		if err != nil {
+			log.WithFields(log.Fields{
+				"JSON": tm,
+			}).Error("JSON编码错误")
+			return
+		}
+		str = string(d)
 	case string:
+		log.Debug("string")
 		str = data.(string)
 	default:
+		log.Debug("default")
 		d, err := json.Marshal(data)
 		if err != nil {
 			log.WithFields(log.Fields{

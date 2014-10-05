@@ -37,6 +37,11 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
   $scope.registerEvent = (code, event, cb)->
     # 注册事件
     commands["#{code}.#{event}"] = cb
+  $scope.registerEvent('base', CONST.msg, (data)->
+    d = JSON.parse(data)
+    $log.debug d
+    alert(d.msg)
+  )
   $scope.registerEvent('base', CONST.login, $scope.eventLogin)
   $scope.registerEvent('base', CONST.count, $scope.eventCount)
   $scope.registerEvent('base', CONST.dict, (data)->

@@ -116,15 +116,25 @@ func updateDictEvent(data *string, ws *websocket.Conn, session Session) {
 		"ID": d.Id,
 	}).Debug("update Dict Event")
 	if d.Id == 0 {
-		db.Save(&d)
-		d.publish()
+		e := db.Save(&d).Error
+		if e == nil {
+			d.publish()
+		} else {
+			log.Debug(e)
+			send(ws, Code, 消息, e)
+		}
 	} else {
 		var o Dict
 		db.First(&o, d.Id)
 		o.Code = d.Code
 		o.Title = d.Title
-		db.Save(&o)
-		o.publish()
+		e := db.Save(&o).Error
+		if e == nil {
+			o.publish()
+		} else {
+			log.Debug(e)
+			send(ws, Code, 消息, e)
+		}
 	}
 }
 
@@ -135,6 +145,7 @@ func init() {
 	RegisterEvent(Code, 修改字典, updateDictEvent)
 	db.AutoMigrate(&Dict{}, &DictVer{})
 	db.Model(&Dict{}).AddUniqueIndex("idx_dict_code", "type", "code")
+	errorMessage["idx_dict_code"] = "字典代码不能重复"
 	db.Model(&DictVer{}).AddUniqueIndex("idx_dict_ver", "type")
 	var dvs []DictVer
 	db.Find(&dvs)

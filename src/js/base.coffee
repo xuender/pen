@@ -5,14 +5,15 @@ Copyright (C) 2014 ender xu <xuender@gmail.com>
 Distributed under terms of the MIT license.
 ###
 CONST =
-  login:       0
-  logout:      1
-  count:       2
-  userAll:     3
-  dict:        4
-  dictVer:     5
-  getDict:     6
-  updateDict:  7
+  msg:         0
+  login:       1
+  logout:      2
+  count:       3
+  userAll:     4
+  dict:        5
+  dictVer:     6
+  getDict:     7
+  updateDict:  8
 angular.module('pen', [
   'ngRoute'
   'ui.bootstrap'
