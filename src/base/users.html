@@ -3,28 +3,17 @@
 </div>
 <table ng-table="tableParams" show-filter="true" class="table">
   <tr ng-repeat="user in $data">
-    <td data-title="'性别'" sortable="'Gender'" filter="{'Gender': 'select'}" filter-data="getDict('gender')">
-      <span ng-if="!user.$edit">{{ dict_gender[user.Gender] }}</span>
-      <div ng-if="user.$edit">
-        <input class="form-control" type="text" ng-model="user.Id" />
-      </div>
-    </td>
     <td data-title="'昵称'" sortable="'Nick'" filter="{'Nick': 'text'}">
-      <span ng-if="!user.$edit">{{ user.Nick }}</span>
-      <div ng-if="user.$edit">
-        <input class="form-control" type="text" ng-model="user.Nick" />
-      </div>
+      {{ user.Nick }}
+    </td>
+    <td data-title="'性别'" sortable="'Gender'" filter="{'Gender': 'select'}" filter-data="getDict('gender')">
+      {{ dict_gender[user.Gender] }}
     </td>
     <td data-title="'邮件地址'" sortable="'Email'" filter="{'Email': 'text'}">
-      <span ng-if="!user.$edit">{{ user.Email }}</span>
-      <div ng-if="user.$edit">
-        <input class="form-control" type="email" ng-model="user.Email" />
-      </div>
+      {{ user.Email }}
     </td>
-    <td data-title="'操作'" width="200">
-      <button ng-if="!user.$edit" class="btn btn-default btn-sm" ng-click="user.$edit = true">编辑</button>
-      <button class="btn btn-warning btn-sm">禁用</button>
-      <button ng-if="user.$edit" class="btn btn-primary btn-sm" ng-click="user.$edit = false">保存</button>
+    <td data-title="'操作'" width="100">
+      <button class="btn btn-default btn-sm" ng-click="edit(user)">编辑</button>
     </td>
   </tr>
 </table>

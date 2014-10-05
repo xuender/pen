@@ -103,7 +103,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
   $scope.showLogin = (init = false)->
     ### 显示登录窗口 ###
     i = $modal.open(
-      templateUrl: 'login.html'
+      templateUrl: 'base/login.html'
       controller: LoginCtrl
       backdrop: 'static'
       keyboard: false

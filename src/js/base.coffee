@@ -30,7 +30,7 @@ angular.module('pen', [
       name: '首页'
     ).when('/users',
       templateUrl: 'base/users.html'
-      controller: 'UserCtrl'
+      controller: 'UsersCtrl'
       name: '用户管理'
     ).when('/dict',
       templateUrl: 'base/dict.html'

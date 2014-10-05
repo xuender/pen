@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="cancel()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+  <h4 class="modal-title">用户编辑</h4>
+</div><!-- modal-header -->
+<div class="modal-body">
+  <form name="userForm" class="login">
+    <div class="form-group">
+      <label class="control-label" for="i_nick">昵称</label>
+      <input ng-model="user.Nick"
+      type="text" name="nick" id="i_nick" 
+      required class="form-control" placeholder="输入您的昵称"/>
+      <label class="control-label" for="i_email">邮箱</label>
+      <input ng-model="user.Email"
+      type="email" name="email" id="i_email" 
+      required class="form-control" placeholder="输入您的邮箱"/>
+      <label class="control-label" for="i_gender">性别</label>
+      {{ user.Gender }}
+      <select ng-model="user.Gender" ng-options="k as v for (k, v) in gender"
+      name="gender" id="i_gender" class="form-control">
+      <option value="">-- 请选择 --</option>
+      </select>
+    </div><!-- form-group -->
+  </form>
+</div><!-- modal-body -->
+<div class="modal-footer">
+  <button ng-click="userForm.$valid?ok():''"
+  class="btn btn-primary">确定</button>
+  <button ng-hide="init" class="btn btn-warning" ng-click="cancel()">取消</button>
+</div><!-- modal-footer -->
+
