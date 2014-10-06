@@ -72,7 +72,7 @@ func (u *Dict) publish() {
 	//tm.Dict[u.Code] = u.Title
 	for ws, session := range onlines {
 		if session.IsLogin {
-			send(ws, Code, 字典, tm)
+			Send(ws, Code, 字典, tm)
 		}
 	}
 }
@@ -98,14 +98,14 @@ func dictSend(t string, ws *websocket.Conn) {
 	var tm DictMessage
 	tm.Type = t
 	tm.read()
-	send(ws, Code, 字典, tm)
+	Send(ws, Code, 字典, tm)
 }
 
 // 查看字典
 func getDictEvent(data *string, ws *websocket.Conn, session Session) {
 	var ds []Dict
 	db.Where("type = ?", data).Find(&ds)
-	send(ws, Code, 查看字典, ds)
+	Send(ws, Code, 查看字典, ds)
 }
 
 // 修改字典
@@ -119,10 +119,10 @@ func updateDictEvent(data *string, ws *websocket.Conn, session Session) {
 		e := db.Save(&d).Error
 		if e == nil {
 			d.publish()
-			send(ws, Code, 修改字典, "ok")
+			Send(ws, Code, 修改字典, "ok")
 		} else {
 			log.Debug(e)
-			send(ws, Code, 消息, e)
+			Send(ws, Code, MSG, e)
 		}
 	} else {
 		var o Dict
@@ -132,10 +132,10 @@ func updateDictEvent(data *string, ws *websocket.Conn, session Session) {
 		e := db.Save(&o).Error
 		if e == nil {
 			o.publish()
-			send(ws, Code, 修改字典, "ok")
+			Send(ws, Code, 修改字典, "ok")
 		} else {
 			log.Debug(e)
-			send(ws, Code, 消息, e)
+			Send(ws, Code, MSG, e)
 		}
 	}
 }
@@ -145,10 +145,17 @@ func init() {
 	RegisterEvent(Code, 字典版本, dictVerEvent)
 	RegisterEvent(Code, 查看字典, getDictEvent)
 	RegisterEvent(Code, 修改字典, updateDictEvent)
-	db.AutoMigrate(&Dict{}, &DictVer{})
-	db.Model(&Dict{}).AddUniqueIndex("idx_dict_code", "type", "code")
+	if db.CreateTable(&Dict{}).Error == nil {
+		db.Model(&Dict{}).AddUniqueIndex("idx_dict_code", "type", "code")
+	} else {
+		db.AutoMigrate(&Dict{})
+	}
+	if db.CreateTable(&DictVer{}).Error == nil {
+		db.Model(&DictVer{}).AddUniqueIndex("idx_dict_ver", "type")
+	} else {
+		db.AutoMigrate(&DictVer{})
+	}
 	errorMessage["idx_dict_code"] = "字典代码不能重复"
-	db.Model(&DictVer{}).AddUniqueIndex("idx_dict_ver", "type")
 	var dvs []DictVer
 	db.Find(&dvs)
 	for _, dv := range dvs {

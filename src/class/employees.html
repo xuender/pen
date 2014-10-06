@@ -1,0 +1,30 @@
+<ol class="breadcrumb">
+  <li><a href="#">首页</a></li>
+  <li>学习班</li>
+  <li class="active">工作人员</li>
+</ol>
+<div class="btn-group btn-group-lg">
+  <button class="btn btn-default" ng-click="add()">增加</button>
+</div>
+<table ng-table="tableParams" show-filter="true" class="table">
+  <tr ng-repeat="d in $data">
+    <td data-title="'姓名'" sortable="'Name'" filter="{'Name': 'text'}">
+      {{ d.Name }}
+    </td>
+    <td data-title="'职务'" sortable="'Duty'" filter="{'Duty': 'select'}" filter-data="getDict('duty')">
+      {{ dict_duty[d.Duty] }}
+    </td>
+    <td data-title="'性别'" sortable="'Gender'" filter="{'Gender': 'select'}" filter-data="getDict('gender')">
+      {{ dict_gender[d.Gender] }}
+    </td>
+    <td data-title="'省份'" sortable="'Province'" filter="{'Province': 'select'}" filter-data="getDict('province')">
+      {{ dict_province[d.Province] }}
+    </td>
+    <td data-title="'城市'" sortable="'City'" filter="{'City': 'text'}">
+      {{ d.City }}
+    </td>
+    <td data-title="'操作'" width="100">
+      <button class="btn btn-default btn-sm" ng-click="edit(d)">编辑</button>
+    </td>
+  </tr>
+</table>

@@ -8,24 +8,30 @@ import (
 
 // 基础对象
 type BaseObject struct {
-	Id      int64
-	Created time.Time
-	Updated time.Time
+	Id        int64
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt time.Time
 }
 
-func (u *BaseObject) BeforeCreate() (err error) {
-	u.Created = time.Now()
-	u.Updated = u.Created
-	return
-}
-
-func (u *BaseObject) BeforeUpdate() (err error) {
-	u.Updated = time.Now()
-	return
-}
+//func (u *BaseObject) BeforeCreate() (err error) {
+//	u.CreatedAt = time.Now()
+//	u.UpdatedAt = u.CreatedAt
+//	return
+//}
+//
+//func (u *BaseObject) BeforeUpdate() (err error) {
+//	u.UpdatedAt = time.Now()
+//	return
+//}
 
 // 全局数据库操作对象
 var db gorm.DB
+
+// 获取数据库
+func Db() *gorm.DB {
+	return &db
+}
 
 // 初始化
 func init() {

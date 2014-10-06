@@ -3,6 +3,7 @@ package main
 import (
 	//db "./db"
 	"./base"
+	_ "./class"
 	"code.google.com/p/go.net/websocket"
 	log "github.com/Sirupsen/logrus"
 	"github.com/go-martini/martini"

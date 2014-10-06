@@ -1,19 +1,24 @@
+<ol class="breadcrumb">
+  <li><a href="#">首页</a></li>
+  <li>系统管理</li>
+  <li class="active">用户管理</li>
+</ol>
 <div class="btn-group btn-group-lg">
-  <button class="btn btn-default">增加用户</button>
+  <button class="btn btn-default">增加</button>
 </div>
 <table ng-table="tableParams" show-filter="true" class="table">
-  <tr ng-repeat="user in $data">
+  <tr ng-repeat="d in $data">
     <td data-title="'昵称'" sortable="'Nick'" filter="{'Nick': 'text'}">
-      {{ user.Nick }}
+      {{ d.Nick }}
     </td>
     <td data-title="'性别'" sortable="'Gender'" filter="{'Gender': 'select'}" filter-data="getDict('gender')">
-      {{ dict_gender[user.Gender] }}
+      {{ dict_gender[d.Gender] }}
     </td>
     <td data-title="'邮件地址'" sortable="'Email'" filter="{'Email': 'text'}">
-      {{ user.Email }}
+      {{ d.Email }}
     </td>
     <td data-title="'操作'" width="100">
-      <button class="btn btn-default btn-sm" ng-click="edit(user)">编辑</button>
+      <button class="btn btn-default btn-sm" ng-click="edit(d)">编辑</button>
     </td>
   </tr>
 </table>

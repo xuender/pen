@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	消息 = iota
+	MSG = iota
 	登录
 	登出
 	人数
@@ -21,7 +21,7 @@ const (
 
 func init() {
 	log.WithFields(log.Fields{
-		"消息":   消息,
+		"MSG":  MSG,
 		"登录":   登录,
 		"登出":   登出,
 		"人数":   人数,
@@ -32,7 +32,7 @@ func init() {
 		"查看字典": 查看字典,
 		"修改字典": 修改字典,
 	}).Debug("枚举")
-	RegisterMeta(Meta{"基本功能", "base", "用户管理、身份认证", []uint{
+	RegisterMeta(Meta{"基本功能", Code, "用户管理、身份认证", []uint{
 		登录,
 		登出,
 		人数,

@@ -48,7 +48,7 @@ DictCtrl = ($scope, $log, $route, $routeParams, ngTableParams, $filter)->
     #d.$edit = false
     if update
       update = false
-      $scope.send('base', CONST.updateDict, d)
+      $scope.send('base', BASE.updateDict, d)
   $scope.add = ->
     # 增加
     $log.debug 'add...'
@@ -58,14 +58,14 @@ DictCtrl = ($scope, $log, $route, $routeParams, ngTableParams, $filter)->
     )
     $scope.tableParams.reload()
     $log.debug $scope.dict
-  $scope.registerEvent('base', CONST.updateDict, (data)->
+  $scope.registerEvent('base', BASE.updateDict, (data)->
     if 'ok' == data
       $scope.current.$edit = false
-      $scope.send('base', CONST.getDict, $scope.type)
+      $scope.send('base', BASE.getDict, $scope.type)
   )
-  $scope.registerEvent('base', CONST.getDict, $scope.readDict)
+  $scope.registerEvent('base', BASE.getDict, $scope.readDict)
   $scope.ready(->
-    $scope.send('base', CONST.getDict, $scope.type)
+    $scope.send('base', BASE.getDict, $scope.type)
   )
 
 DictCtrl.$inject = [

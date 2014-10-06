@@ -50,13 +50,13 @@ UsersCtrl = ($scope, $log, $route, $modal, ngTableParams, $filter)->
     )
     i.result.then((user)->
       $log.info '修改'
-      $scope.send('base', CONST.userAll)
+      $scope.send('base', BASE.userAll)
     ,->
       $log.info '取消'
     )
-  $scope.registerEvent('base', CONST.userAll, $scope.userAll)
+  $scope.registerEvent('base', BASE.userAll, $scope.userAll)
   $scope.ready(->
-    $scope.send('base', CONST.userAll)
+    $scope.send('base', BASE.userAll)
   )
 
 UsersCtrl.$inject = [

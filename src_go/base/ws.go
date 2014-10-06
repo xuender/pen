@@ -84,7 +84,7 @@ func WsHandler(ws *websocket.Conn) {
 			session.Token = uuid.NewUUID().String()
 			onlines[ws] = session
 			// 服务器要求客户端发送登陆信息
-			send(ws, Code, 登录, "login")
+			Send(ws, Code, 登录, "login")
 			// 开始关注在线人数
 			RegisterOb(人数, ws)
 		} else {
@@ -104,7 +104,7 @@ func WsHandler(ws *websocket.Conn) {
 }
 
 // 发送消息
-func send(ws *websocket.Conn, code string, event int, data interface{}) {
+func Send(ws *websocket.Conn, code string, event int, data interface{}) {
 	var str string
 	log.Debug(data)
 	switch data.(type) {
@@ -201,16 +201,16 @@ func loginEvent(data *string, ws *websocket.Conn, session Session) {
 					"ws.Token":      onlines[ws].Token,
 					"session.Token": session.Token,
 				}).Debug("令牌验证成功")
-				send(ws, Code, 登录, "OK")
+				Send(ws, Code, 登录, "OK")
 				updateCount()
 			} else {
-				send(ws, Code, 登录, "ERROR_PASSWORD")
+				Send(ws, Code, 登录, "ERROR_PASSWORD")
 			}
 		} else {
-			send(ws, Code, 登录, "ERROR_NICK")
+			Send(ws, Code, 登录, "ERROR_NICK")
 		}
 	} else {
-		send(ws, Code, 登录, "ERROR_DATA")
+		Send(ws, Code, 登录, "ERROR_DATA")
 	}
 }
 
@@ -285,7 +285,7 @@ func ObUpdate(name int, code string, event int, data interface{}) {
 		for i := 0; i < l; i++ {
 			ws, ok := items[i].(*websocket.Conn)
 			if ok {
-				go send(ws, code, event, data)
+				go Send(ws, code, event, data)
 			}
 		}
 	}

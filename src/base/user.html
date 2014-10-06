@@ -8,37 +8,26 @@
       <div class="row">
         <label class="control-label col-xs-2">昵称</label>
         <div class="col-xs-4">
-          <p class="form-control-static">{{ user.Nick }}</p>
+          <p class="form-control-static">{{ d.Nick }}</p>
         </div><!-- 10 -->
       </div><!-- row -->
       <div class="row">
         <label class="control-label col-xs-2" for="i_gender">性别</label>
         <div class="col-xs-3">
           <select class="form-control" name="gender" id="i_gender"
-          ng-model="user.Gender" ng-options="k as v for (k, v) in gender">
+          ng-model="d.Gender" ng-options="k as v for (k, v) in gender">
           <option value="">-- 请选择 --</option>
           </select>
         </div><!-- 10 -->
         <label class="control-label col-xs-2" for="i_email">邮箱</label>
         <div class="col-xs-3">
-          <input class="form-control" ng-model="user.Email"
+          <input class="form-control" ng-model="d.Email"
           type="email" name="email" id="i_email" 
           required placeholder="输入您的邮箱"/>
         </div><!-- 10 -->
       </div><!-- row -->
     </div><!-- form-group -->
-    <div class="form-group">
-      <div class="row">
-        <label class="control-label col-xs-2">创建时间</label>
-        <div class="col-xs-3">
-          <p class="form-control-static">{{ user.Created | date:"yyyy-MM-dd H:mm:ss" }}</p>
-        </div><!-- 10 -->
-        <label class="control-label col-xs-2">修改时间</label>
-        <div class="col-xs-3">
-          <p class="form-control-static">{{ user.Updated | date:"yyyy-MM-dd H:mm:ss" }}</p>
-        </div><!-- 10 -->
-      </div><!-- row -->
-    </div><!-- form-group -->
+    <div ng-include="'base/base_object.html'"></div>
   </form>
 </div><!-- modal-body -->
 <div class="modal-footer">

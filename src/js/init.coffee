@@ -4,17 +4,6 @@ Copyright (C) 2014 ender xu <xuender@gmail.com>
 
 Distributed under terms of the MIT license.
 ###
-CONST =
-  msg:         0
-  login:       1
-  logout:      2
-  count:       3
-  userAll:     4
-  updateUser:  5
-  dict:        6
-  dictVer:     7
-  getDict:     8
-  updateDict:  9
 angular.module('pen', [
   'ngRoute'
   'ui.bootstrap'

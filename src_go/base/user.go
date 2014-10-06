@@ -47,7 +47,7 @@ func userAllEvent(data *string, ws *websocket.Conn, session Session) {
 	//TODO 权限认证
 	var users []User
 	db.Find(&users)
-	send(ws, Code, 用户列表, users)
+	Send(ws, Code, 用户列表, users)
 }
 
 func updateUserEvent(data *string, ws *websocket.Conn, session Session) {
@@ -61,10 +61,10 @@ func updateUserEvent(data *string, ws *websocket.Conn, session Session) {
 		e := db.Save(&u).Error
 		if e == nil {
 			//d.publish()
-			send(ws, Code, 修改用户, "ok")
+			Send(ws, Code, 修改用户, "ok")
 		} else {
 			log.Debug(e)
-			send(ws, Code, 消息, e)
+			Send(ws, Code, MSG, e)
 		}
 	} else {
 		var o User
@@ -74,10 +74,10 @@ func updateUserEvent(data *string, ws *websocket.Conn, session Session) {
 		e := db.Save(&o).Error
 		if e == nil {
 			//o.publish()
-			send(ws, Code, 修改用户, "ok")
+			Send(ws, Code, 修改用户, "ok")
 		} else {
 			log.Debug(e)
-			send(ws, Code, 消息, e)
+			Send(ws, Code, MSG, e)
 		}
 	}
 }
@@ -87,24 +87,23 @@ func init() {
 	RegisterEvent(Code, 用户列表, userAllEvent)
 	RegisterEvent(Code, 修改用户, updateUserEvent)
 	// 数据库初始化
-	db.AutoMigrate(&User{})
-	db.Model(&User{}).AddUniqueIndex("idx_user_nick", "nick")
-	// 创建管理员
-	var count int
-	db.Model(User{}).Count(&count)
-	if count == 0 {
+	if db.CreateTable(&User{}).Error == nil {
+		db.Model(&User{}).AddUniqueIndex("idx_user_nick", "nick")
+		// 创建管理员
 		e := User{
 			Nick:     "ender",
 			Gender:   "M",
-			Email:    "xxx@xxx",
+			Email:    "xuender@gmail.com",
 			Password: "40b0dada4577cd2a27d93ee392fa9a4f",
 		}
 		log.WithFields(log.Fields{
 			"id": e.Id,
 		}).Debug("增加管理员")
 		db.Create(&e)
-		log.WithFields(log.Fields{
-			"id": e.Id,
-		}).Debug("增加管理员之后")
+		db.Save(&Dict{Type: "type", Code: "gender", Title: "性别"})
+		db.Save(&Dict{Type: "gender", Code: "M", Title: "男"})
+		db.Save(&Dict{Type: "gender", Code: "F", Title: "女"})
+	} else {
+		db.AutoMigrate(&User{})
 	}
 }
