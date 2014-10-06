@@ -57,6 +57,16 @@ module.exports = (grunt)->
           expand: true
           filter: 'isFile'
         ]
+      angularI18n:
+        files: [
+          cwd: 'bower_components/angular-i18n/'
+          src: [
+            'angular-locale_zh-cn.js'
+          ]
+          dest: 'src_go/public/js'
+          expand: true
+          filter: 'isFile'
+        ]
       angular_route:
         files: [
           cwd: 'bower_components/angular-route/'
@@ -230,9 +240,10 @@ module.exports = (grunt)->
             'src/base/js/user.coffee'
             'src/base/js/dict.coffee'
             'src/class/js/init.coffee'
-            'src/class/js/teacher.coffee'
             'src/class/js/employee.coffee'
             'src/class/js/employees.coffee'
+            'src/class/js/teacher.coffee'
+            'src/class/js/teachers.coffee'
           ]
     uglify:
       main:

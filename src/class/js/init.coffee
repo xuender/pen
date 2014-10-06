@@ -8,6 +8,8 @@ CLASS =
   class:        0
   employee:     1
   editEmployee: 2
+  teacher:      3
+  editTeacher:  4
 MENUS.push(
   {
     name: '学习班'
@@ -21,10 +23,10 @@ MENUS.push(
         menu: true
       }
       {
-        templateUrl: 'class/teacher.html'
-        controller: 'TeacherCtrl'
+        templateUrl: 'class/teachers.html'
+        controller: 'TeachersCtrl'
         name: '教师'
-        url: '/teacher'
+        url: '/teachers'
         menu: true
       }
       {

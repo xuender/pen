@@ -8,6 +8,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
+// 雇员
 type ClassEmployee struct {
 	base.BaseObject
 	ClassPeople `sql:"-"`
@@ -21,23 +22,7 @@ func (v *ClassEmployee) read() {
 	if v.PeopleId == 0 {
 		return
 	}
-	var p ClassPeople
-	log.WithFields(log.Fields{
-		"ID": v.Id,
-		//"Name": v.Name,
-		"PeopleId": v.PeopleId,
-		"Duty":     v.Duty,
-	}).Debug("查看义工信息")
-	db.First(&p, v.PeopleId)
-	log.WithFields(log.Fields{
-		"ID":   p.Id,
-		"Name": p.Name,
-	}).Debug("查看人员信息")
-	v.Name = p.Name
-	v.Gender = p.Gender
-	v.Country = p.Country
-	v.Province = p.Province
-	v.City = p.City
+	db.First(&v.ClassPeople, v.PeopleId)
 }
 
 // 获取义工信息列表
@@ -73,14 +58,10 @@ func updateEmployeeEvent(data *string, ws *websocket.Conn, session base.Session)
 		var o ClassEmployee
 		var p ClassPeople
 		db.First(&o, e.Id)
-		o.Duty = e.Duty
-		db.Save(&o)
-		db.First(&p, e.PeopleId)
-		p.Name = e.Name
-		p.Gender = e.Gender
-		p.Country = e.Country
-		p.Province = e.Province
-		p.City = e.City
+		db.Save(&e)
+		db.First(&p, o.PeopleId)
+		p = e.ClassPeople
+		p.Id = e.PeopleId
 		log.WithFields(log.Fields{
 			"ID":   p.Id,
 			"Name": p.Name,
