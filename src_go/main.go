@@ -9,6 +9,7 @@ import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/gzip"
 	"github.com/martini-contrib/render"
+	"net/http"
 	//"./utils"
 )
 
@@ -26,7 +27,10 @@ func main() {
 	// 模板支持
 	m.Use(render.Renderer())
 	//
-	m.Get("/meta.js", base.GetMetaJs)
+	m.Get("/meta.js", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/javascript")
+		w.Write([]byte(base.GetMetaJs()))
+	})
 	// websocket 支持
 	m.Get("/ws", websocket.Handler(base.WsHandler).ServeHTTP)
 	m.NotFound(func(r render.Render) {

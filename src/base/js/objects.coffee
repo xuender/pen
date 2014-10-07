@@ -1,15 +1,21 @@
 ###
-volunteer.coffee
+objects.coffee
 Copyright (C) 2014 ender xu <xuender@gmail.com>
 
 Distributed under terms of the MIT license.
+
+典型对象列表编辑ctrl
 ###
-EmployeesCtrl = ($scope, $log, $route, $modal, ngTableParams, $filter)->
+
+ObjectsCtrl = ($scope, $log, $route, $modal, ngTableParams, $filter)->
+  route = $route.current.$$route
+  object = route.object
+  #$log.debug object
   $scope.addHistory($route.current)
   $scope.ds = []
   $scope.readDs = (data)->
     # 读取datas
-    $log.debug('收到义工信息: %s', data)
+    $log.debug('收到 [ %s ] data: %s', route.name, data)
     if data and 'null' != data
       $scope.ds = JSON.parse(data)
     else
@@ -35,8 +41,8 @@ EmployeesCtrl = ($scope, $log, $route, $modal, ngTableParams, $filter)->
   $scope.add = ()->
     # 用户编辑
     i = $modal.open(
-      templateUrl: 'class/employee.html'
-      controller: EmployeeCtrl
+      templateUrl: object.templateUrl
+      controller: object.controller
       backdrop: 'static'
       keyboard: true
       size: 'lg'
@@ -48,15 +54,15 @@ EmployeesCtrl = ($scope, $log, $route, $modal, ngTableParams, $filter)->
     )
     i.result.then((d)->
       $log.info '修改'
-      $scope.send('class', CLASS.雇员)
+      $scope.send(object.code, object.getId)
     ,->
       $log.info '取消'
     )
   $scope.edit = (d)->
     # 用户编辑
     i = $modal.open(
-      templateUrl: 'class/employee.html'
-      controller: EmployeeCtrl
+      templateUrl: object.templateUrl
+      controller: object.controller
       backdrop: 'static'
       keyboard: true
       size: 'lg'
@@ -67,22 +73,17 @@ EmployeesCtrl = ($scope, $log, $route, $modal, ngTableParams, $filter)->
           $scope
     )
     i.result.then((d)->
-      $log.info '修改'
-      $scope.send('class', CLASS.雇员)
+      $log.debug '修改'
+      $scope.send(object.code, object.getId)
     ,->
-      $log.info '取消'
+      $log.debug '取消'
     )
-  #$scope.registerEvent('class', CLASS.volunteer, (data)->
-  #  if 'ok' == data
-  #    $scope.current.$edit = false
-  #    $scope.send('base', BASE.getDict, $scope.type)
-  #)
-  $scope.registerEvent('class', CLASS.雇员, $scope.readDs)
+  $scope.registerEvent(object.code, object.getId, $scope.readDs)
   $scope.ready(->
-    $scope.send('class', CLASS.雇员)
+    $scope.send(object.code, object.getId)
   )
 
-EmployeesCtrl.$inject = [
+ObjectsCtrl.$inject = [
   '$scope'
   '$log'
   '$route'
@@ -90,3 +91,4 @@ EmployeesCtrl.$inject = [
   'ngTableParams'
   '$filter'
 ]
+

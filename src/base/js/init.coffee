@@ -18,10 +18,16 @@ MENUS = [
       }
       {
         templateUrl: 'base/users.html'
-        controller: 'UsersCtrl'
+        controller: 'ObjectsCtrl'
         name: '用户管理'
         url: '/users'
         menu: true
+        object: {
+          code: 'base'
+          templateUrl: 'base/user.html'
+          controller: 'EmployeeCtrl'
+          getId: BASE.用户列表
+        }
       }
       {
         templateUrl: 'base/dict.html'

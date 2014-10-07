@@ -11,17 +11,29 @@ MENUS.push(
     routes: [
       {
         templateUrl: 'class/employees.html'
-        controller: 'EmployeesCtrl'
+        controller: 'ObjectsCtrl'
         name: '工作人员'
         url: '/employees'
         menu: true
+        object: {
+          code: 'class'
+          templateUrl: 'class/employee.html'
+          controller: 'EmployeeCtrl'
+          getId: CLASS.雇员
+        }
       }
       {
         templateUrl: 'class/teachers.html'
-        controller: 'TeachersCtrl'
+        controller: 'ObjectsCtrl'
         name: '教师'
         url: '/teachers'
         menu: true
+        object: {
+          code: 'class'
+          templateUrl: 'class/teacher.html'
+          controller: 'TeacherCtrl'
+          getId: CLASS.教师
+        }
       }
       {
         templateUrl: 'class/teacher.html'
