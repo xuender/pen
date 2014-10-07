@@ -4,12 +4,6 @@ Copyright (C) 2014 ender xu <xuender@gmail.com>
 
 Distributed under terms of the MIT license.
 ###
-CLASS =
-  class:        0
-  employee:     1
-  editEmployee: 2
-  teacher:      3
-  editTeacher:  4
 MENUS.push(
   {
     name: '学习班'

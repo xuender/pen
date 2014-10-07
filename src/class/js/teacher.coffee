@@ -10,10 +10,10 @@ TeacherCtrl= ($scope, $log, $modalInstance, d, pen)->
   $scope.ok = ->
     $log.debug 'ok'
     $log.debug $scope.d
-    $scope.pen.send('class', CLASS.editTeacher, $scope.d)
+    $scope.pen.send('class', CLASS.编辑教师, $scope.d)
   $scope.cancel = ->
     $modalInstance.dismiss('cancel')
-  $scope.pen.registerEvent('class', CLASS.editTeacher, (data)->
+  $scope.pen.registerEvent('class', CLASS.编辑教师, (data)->
     if 'ok' == data
       $modalInstance.close($scope.d)
   )

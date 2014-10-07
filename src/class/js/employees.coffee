@@ -48,7 +48,7 @@ EmployeesCtrl = ($scope, $log, $route, $modal, ngTableParams, $filter)->
     )
     i.result.then((d)->
       $log.info '修改'
-      $scope.send('class', CLASS.employee)
+      $scope.send('class', CLASS.雇员)
     ,->
       $log.info '取消'
     )
@@ -68,7 +68,7 @@ EmployeesCtrl = ($scope, $log, $route, $modal, ngTableParams, $filter)->
     )
     i.result.then((d)->
       $log.info '修改'
-      $scope.send('class', CLASS.employee)
+      $scope.send('class', CLASS.雇员)
     ,->
       $log.info '取消'
     )
@@ -77,9 +77,9 @@ EmployeesCtrl = ($scope, $log, $route, $modal, ngTableParams, $filter)->
   #    $scope.current.$edit = false
   #    $scope.send('base', BASE.getDict, $scope.type)
   #)
-  $scope.registerEvent('class', CLASS.employee, $scope.readDs)
+  $scope.registerEvent('class', CLASS.雇员, $scope.readDs)
   $scope.ready(->
-    $scope.send('class', CLASS.employee)
+    $scope.send('class', CLASS.雇员)
   )
 
 EmployeesCtrl.$inject = [

@@ -2,6 +2,8 @@ package base
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 )
 
 // 模块元信息
@@ -9,7 +11,7 @@ type Meta struct {
 	Name        string
 	Code        string
 	Description string
-	Action      []uint
+	Action      map[uint]string
 }
 
 var metas []Meta
@@ -19,10 +21,23 @@ func RegisterMeta(meta Meta) {
 	metas = append(metas, meta)
 }
 
+// 获取注册元信息
+func GetMetaJs() string {
+	ret := ""
+	for _, m := range metas {
+		ret += "var " + strings.ToUpper(m.Code) + "={"
+		for k, v := range m.Action {
+			ret += fmt.Sprintf("%s:%d,", v, k)
+		}
+		ret += "};\n"
+	}
+	return ret
+}
+
 // 全部功能取值
 func (r Meta) allAction() int64 {
 	var ret int64 = 0
-	for _, i := range r.Action {
+	for i, _ := range r.Action {
 		ret = ret | int64(1<<i)
 	}
 	return ret
@@ -33,7 +48,7 @@ func (r Meta) hasAction(power int64, actions ...uint) bool {
 	// 判断actions是否包含在Meta中
 	for _, a := range actions {
 		no := true
-		for _, i := range r.Action {
+		for i, _ := range r.Action {
 			if a == i {
 				no = false
 			}
@@ -53,7 +68,7 @@ func (r Meta) hasAction(power int64, actions ...uint) bool {
 // 增加功能权限
 func (r Meta) addAction(power int64, actions ...uint) int64 {
 	for _, a := range actions {
-		for _, i := range r.Action {
+		for i, _ := range r.Action {
 			if a == i {
 				power = power | int64(1<<a)
 			}

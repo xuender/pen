@@ -10,11 +10,11 @@ UserCtrl = ($scope, $log, $modalInstance, user, gender, pen)->
   $scope.pen = pen
   $scope.ok = ->
     $log.debug 'ok'
-    $scope.pen.send('base', BASE.updateUser, $scope.user)
+    $scope.pen.send('base', BASE.修改用户, $scope.user)
     #$modalInstance.close($scope.user)
   $scope.cancel = ->
     $modalInstance.dismiss('cancel')
-  $scope.pen.registerEvent('base', BASE.updateUser, (data)->
+  $scope.pen.registerEvent('base', BASE.修改用户, (data)->
     if 'ok' == data
       $modalInstance.close($scope.d)
       #$scope.current.$edit = false

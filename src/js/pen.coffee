@@ -16,7 +16,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
     if data == 'OK'
       $scope.isLogin = true
       # 获取版本
-      $scope.send('base', BASE.dictVer, JSON.stringify($scope.dictVer))
+      $scope.send('base', BASE.字典版本, JSON.stringify($scope.dictVer))
       for r in readies
         console.info 'run ready'
         r()
@@ -38,14 +38,14 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
   $scope.registerEvent = (code, event, cb)->
     # 注册事件
     commands["#{code}.#{event}"] = cb
-  $scope.registerEvent('base', BASE.msg, (data)->
+  $scope.registerEvent('base', BASE.MSG, (data)->
     d = JSON.parse(data)
     $log.debug d
     alert(d.msg)
   )
-  $scope.registerEvent('base', BASE.login, $scope.eventLogin)
-  $scope.registerEvent('base', BASE.count, $scope.eventCount)
-  $scope.registerEvent('base', BASE.dict, (data)->
+  $scope.registerEvent('base', BASE.登录, $scope.eventLogin)
+  $scope.registerEvent('base', BASE.人数, $scope.eventCount)
+  $scope.registerEvent('base', BASE.字典, (data)->
     $log.debug("dict....."+data)
     d = JSON.parse(data)
     $log.debug(d)
@@ -84,7 +84,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
     $log.debug('login', $scope.user)
     $log.debug($scope.tract)
     $scope.token = md5($scope.tract + $scope.user.token)
-    $scope.send('base', BASE.login, JSON.stringify(
+    $scope.send('base', BASE.登录, JSON.stringify(
       'nick': $scope.user.nick
       'token': $scope.token
     ))
@@ -133,7 +133,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
   $scope.logout = ->
     ### 登出 ###
     $scope.user.token = ''
-    $scope.send('base', BASE.logout)
+    $scope.send('base', BASE.登出)
     $scope.showLogin(true)
   $scope.send = (code, event, data=null)->
     # 发送数据

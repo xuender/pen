@@ -25,6 +25,8 @@ func main() {
 	m.Use(gzip.All())
 	// 模板支持
 	m.Use(render.Renderer())
+	//
+	m.Get("/meta.js", base.GetMetaJs)
 	// websocket 支持
 	m.Get("/ws", websocket.Handler(base.WsHandler).ServeHTTP)
 	m.NotFound(func(r render.Render) {

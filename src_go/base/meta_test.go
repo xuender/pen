@@ -20,7 +20,7 @@ func TestGetMeta(t *testing.T) {
 	}
 }
 
-var me = Meta{"测试功能", "test", "测试时使用的元数据", []uint{1, 5, 7}}
+var me = Meta{"测试功能", "test", "测试时使用的元数据", map[uint]string{1: "1", 5: "5", 7: "7"}}
 
 // 判断权限
 func TestHasAction(t *testing.T) {

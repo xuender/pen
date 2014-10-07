@@ -48,7 +48,7 @@ TeachersCtrl = ($scope, $log, $route, $modal, ngTableParams, $filter)->
     )
     i.result.then((d)->
       $log.info '修改'
-      $scope.send('class', CLASS.teacher)
+      $scope.send('class', CLASS.教师)
     ,->
       $log.info '取消'
     )
@@ -68,18 +68,13 @@ TeachersCtrl = ($scope, $log, $route, $modal, ngTableParams, $filter)->
     )
     i.result.then((d)->
       $log.info '修改'
-      $scope.send('class', CLASS.teacher)
+      $scope.send('class', CLASS.教师)
     ,->
       $log.info '取消'
     )
-  #$scope.registerEvent('class', CLASS.volunteer, (data)->
-  #  if 'ok' == data
-  #    $scope.current.$edit = false
-  #    $scope.send('base', BASE.getDict, $scope.type)
-  #)
-  $scope.registerEvent('class', CLASS.teacher, $scope.readDs)
+  $scope.registerEvent('class', CLASS.教师, $scope.readDs)
   $scope.ready(->
-    $scope.send('class', CLASS.teacher)
+    $scope.send('class', CLASS.教师)
   )
 
 TeachersCtrl.$inject = [
