@@ -106,6 +106,11 @@ func WsHandler(ws *websocket.Conn) {
 // 发送消息
 func Send(ws *websocket.Conn, code string, event int, data interface{}) {
 	var str string
+	log.WithFields(log.Fields{
+		"code":  code,
+		"event": event,
+		"data":  data,
+	}).Debug("发送数据")
 	log.Debug(data)
 	switch data.(type) {
 	case *pq.Error:
@@ -130,6 +135,16 @@ func Send(ws *websocket.Conn, code string, event int, data interface{}) {
 	case string:
 		log.Debug("string")
 		str = data.(string)
+	case error:
+		log.Debug("ERROR")
+		d, err := json.Marshal(data.(error).Error())
+		if err != nil {
+			log.WithFields(log.Fields{
+				"JSON": data.(error).Error(),
+			}).Error("JSON编码错误")
+			return
+		}
+		str = string(d)
 	default:
 		log.Debug("default")
 		d, err := json.Marshal(data)

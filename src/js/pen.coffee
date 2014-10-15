@@ -41,7 +41,10 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
   $scope.registerEvent('base', BASE.MSG, (data)->
     d = JSON.parse(data)
     $log.debug d
-    alert(d.msg)
+    if Object.prototype.toString.call(d) == "[object String]"
+      alert(d)
+    else
+      alert(d.msg)
   )
   $scope.registerEvent('base', BASE.登录, $scope.eventLogin)
   $scope.registerEvent('base', BASE.人数, $scope.eventCount)

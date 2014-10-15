@@ -24,6 +24,10 @@
   </form>
 </div><!-- modal-body -->
 <div class="modal-footer">
+  <button ng-click="del()" class="btn btn-danger">
+    <i class="fa fa-times"></i>
+    删除
+  </button>
   <button ng-disabled="!form.$valid" ng-click="ok()"
   class="btn btn-primary">确定</button>
   <button ng-hide="init" class="btn btn-warning" ng-click="cancel()">取消</button>

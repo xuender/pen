@@ -37,7 +37,6 @@ func getEmployeeEvent(data *string, session base.Session) (interface{}, error) {
 	return ret, nil
 }
 func updateEmployeeEvent(data *string, session base.Session) (ret interface{}, err error) {
-	//TODO 权限认证
 	ret = "ok"
 	var e ClassEmployee
 	json.Unmarshal([]byte(*data), &e)
@@ -66,9 +65,26 @@ func updateEmployeeEvent(data *string, session base.Session) (ret interface{}, e
 	}
 	return
 }
+
+// 删除雇员
+func delEmployeeEvent(data *string, session base.Session) (ret interface{}, err error) {
+	ret = "ok"
+	var id int64
+	json.Unmarshal([]byte(*data), &id)
+	log.WithFields(log.Fields{
+		"ID": id,
+	}).Debug("删除雇员")
+	var e ClassEmployee
+	err = db.First(&e, id).Error
+	if err == nil {
+		err = db.Delete(&e).Error
+	}
+	return
+}
 func init() {
 	base.RegisterEvent(Code, 雇员, getEmployeeEvent)
 	base.RegisterEvent(Code, 编辑雇员, updateEmployeeEvent)
+	base.RegisterEvent(Code, 删除雇员, delEmployeeEvent)
 	if db.CreateTable(&ClassEmployee{}).Error == nil {
 		log.WithFields(log.Fields{
 			"name": "ClassVolunteer",
