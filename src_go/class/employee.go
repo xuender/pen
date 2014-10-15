@@ -3,7 +3,7 @@ package class
 import (
 	"../base"
 	//"database/sql"
-	"code.google.com/p/go.net/websocket"
+	//"code.google.com/p/go.net/websocket"
 	"encoding/json"
 	log "github.com/Sirupsen/logrus"
 )
@@ -26,7 +26,7 @@ func (v *ClassEmployee) read() {
 }
 
 // 获取义工信息列表
-func getEmployeeEvent(data *string, ws *websocket.Conn, session base.Session) {
+func getEmployeeEvent(data *string, session base.Session) (interface{}, error) {
 	var vs []ClassEmployee
 	db.Find(&vs)
 	var ret []ClassEmployee
@@ -34,10 +34,11 @@ func getEmployeeEvent(data *string, ws *websocket.Conn, session base.Session) {
 		v.read()
 		ret = append(ret, v)
 	}
-	base.Send(ws, Code, 雇员, ret)
+	return ret, nil
 }
-func updateEmployeeEvent(data *string, ws *websocket.Conn, session base.Session) {
+func updateEmployeeEvent(data *string, session base.Session) (ret interface{}, err error) {
 	//TODO 权限认证
+	ret = "ok"
 	var e ClassEmployee
 	json.Unmarshal([]byte(*data), &e)
 	log.WithFields(log.Fields{
@@ -47,13 +48,7 @@ func updateEmployeeEvent(data *string, ws *websocket.Conn, session base.Session)
 		p := e.ClassPeople
 		db.Save(&p)
 		e.PeopleId = p.Id
-		err := db.Save(&e).Error
-		if err == nil {
-			base.Send(ws, Code, 编辑雇员, "ok")
-		} else {
-			log.Debug(err)
-			base.Send(ws, base.Code, base.MSG, err)
-		}
+		err = db.Save(&e).Error
 	} else { //修改
 		var o ClassEmployee
 		var p ClassPeople
@@ -67,14 +62,9 @@ func updateEmployeeEvent(data *string, ws *websocket.Conn, session base.Session)
 			"Name": p.Name,
 			"City": p.City,
 		}).Debug("编辑人员信息")
-		err := db.Save(&p).Error
-		if err == nil {
-			base.Send(ws, Code, 编辑雇员, "ok")
-		} else {
-			log.Debug(err)
-			base.Send(ws, base.Code, base.MSG, err)
-		}
+		err = db.Save(&p).Error
 	}
+	return
 }
 func init() {
 	base.RegisterEvent(Code, 雇员, getEmployeeEvent)

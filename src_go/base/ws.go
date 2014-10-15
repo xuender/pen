@@ -9,7 +9,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/lib/pq"
 	"gopkg.in/fatih/set.v0"
-	"reflect"
+	//"reflect"
 	"strings"
 	"unsafe"
 )
@@ -292,17 +292,19 @@ func ObUpdate(name int, code string, event int, data interface{}) {
 }
 
 // ws事件
-var commands = make(map[string]map[int]func(*string, *websocket.Conn, Session))
+var commands = make(map[string]map[int]interface{})
 
 // 注册事件
-func RegisterEvent(code string, event int, command func(*string, *websocket.Conn, Session)) {
-	if reflect.TypeOf(command).Kind() != reflect.Func {
-		panic("command must be a callable func")
-		return
-	}
+func RegisterEvent(code string, event int, command interface{}) {
+	/*
+	  if reflect.TypeOf(command).Kind() != reflect.Func {
+	    panic("command must be a callable func")
+	    return
+	  }
+	*/
 	events, ok := commands[code]
 	if !ok {
-		events = make(map[int]func(*string, *websocket.Conn, Session))
+		events = make(map[int]interface{})
 		events[event] = command
 		commands[code] = events
 	} else {
@@ -312,6 +314,7 @@ func RegisterEvent(code string, event int, command func(*string, *websocket.Conn
 
 // 事件触发
 func Event(code string, event int, data *string, ws *websocket.Conn) {
+	//TODO 权限认证
 	log.WithFields(log.Fields{
 		"code":  code,
 		"event": event,
@@ -326,7 +329,24 @@ func Event(code string, event int, data *string, ws *websocket.Conn) {
 		if ok {
 			session, ok := onlines[ws]
 			if ok {
-				command(data, ws, session)
+				switch command.(type) {
+				case (func(*string, *websocket.Conn, Session)):
+					command.(func(*string, *websocket.Conn, Session))(data, ws, session)
+				case (func(*string, *websocket.Conn, Session) (interface{}, error)):
+					ret, err := command.(func(*string, *websocket.Conn, Session) (interface{}, error))(data, ws, session)
+					if err == nil {
+						Send(ws, code, event, ret)
+					} else {
+						Send(ws, Code, MSG, err)
+					}
+				case (func(*string, Session) (interface{}, error)):
+					ret, err := command.(func(*string, Session) (interface{}, error))(data, session)
+					if err == nil {
+						Send(ws, code, event, ret)
+					} else {
+						Send(ws, Code, MSG, err)
+					}
+				}
 			}
 		}
 	}
