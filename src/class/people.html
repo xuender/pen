@@ -1,41 +1,53 @@
-<div class="form-group">
-  <div class="row">
-    <label class="control-label col-xs-2" for="i_name">姓名</label>
-    <div class="col-xs-3">
+<div class="row">
+  <div class="form-group col-xs-6"
+  ng-class="{'has-error': form.name.$error.required}">
+    <label class="control-label col-xs-3" for="i_name">姓名</label>
+    <div class="col-xs-6">
       <input class="form-control" ng-model="d.Name"
       type="text" name="name" id="i_name" 
       required placeholder="输入姓名"/>
-    </div><!-- 3 -->
-    <label class="control-label col-xs-2" for="i_gender">性别</label>
-    <div class="col-xs-3">
-      <select class="form-control" name="gender" id="i_gender"
+    </div><!-- 6 -->
+    <span class="help-block col-xs-3" ng-show="form.name.$error.required">不能为空</span>
+  </div><!-- form-group -->
+  <div class="form-group col-xs-6"
+  ng-class="{'has-error': form.gender.$error.required}">
+    <label class="control-label col-xs-3" for="i_gender">性别</label>
+    <div class="col-xs-6">
+      <select class="form-control" name="gender" id="i_gender" required 
       ng-model="d.Gender" ng-options="k as v for (k, v) in pen.dict_gender">
-      <option value="">-- 请选择 --</option>
+        <option value="">-- 请选择 --</option>
       </select>
-    </div><!-- 3 -->
-  </div><!-- row -->
-  <div class="row">
-    <label class="control-label col-xs-2" for="i_country">国籍</label>
-    <div class="col-xs-3">
+    </div><!-- 6 -->
+    <span class="help-block col-xs-3" ng-show="form.gender.$error.required">不能为空</span>
+  </div><!-- form-group -->
+</div><!-- row -->
+<div class="row">
+  <div class="form-group col-xs-6">
+    <label class="control-label col-xs-3" for="i_country">国籍</label>
+    <div class="col-xs-6">
       <select class="form-control" name="country" id="i_country"
       ng-model="d.Country" ng-options="k as v for (k, v) in pen.dict_country">
-      <option value="">-- 请选择 --</option>
+        <option value="">-- 请选择 --</option>
       </select>
-    </div><!-- 3 -->
-    <label class="control-label col-xs-2" for="i_province">省份</label>
-    <div class="col-xs-3">
+    </div><!-- 6 -->
+  </div><!-- form-group -->
+  <div class="form-group col-xs-6">
+    <label class="control-label col-xs-3" for="i_province">省份</label>
+    <div class="col-xs-6">
       <select class="form-control" name="province" id="i_province"
       ng-model="d.Province" ng-options="k as v for (k, v) in pen.dict_province">
-      <option value="">-- 请选择 --</option>
+        <option value="">-- 请选择 --</option>
       </select>
-    </div><!-- 3 -->
-  </div><!-- row -->
-  <div class="row">
-    <label class="control-label col-xs-2" for="i_city">城市</label>
-    <div class="col-xs-3">
+    </div><!-- 6 -->
+  </div><!-- form-group -->
+</div><!-- row -->
+<div class="row">
+  <div class="form-group col-xs-6">
+    <label class="control-label col-xs-3" for="i_city">城市</label>
+    <div class="col-xs-6">
       <input class="form-control" ng-model="d.City"
       type="text" name="city" id="i_city" 
-      required placeholder="输入居住城市"/>
-    </div><!-- 3 -->
-  </div><!-- row -->
-</div><!-- form-group -->
+      placeholder="输入居住城市"/>
+    </div><!-- 6 -->
+  </div><!-- form-group -->
+</div><!-- row -->

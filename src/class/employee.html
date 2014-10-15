@@ -1,26 +1,30 @@
 <div class="modal-header">
-  <button class="close" type="button" ng-click="cancel()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+  <button class="close" type="button" ng-click="cancel()">
+    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+  </button>
   <h4 class="modal-title">工作人员编辑</h4>
 </div><!-- modal-header -->
 <div class="modal-body">
-  <form class="form-horizontal" role="form" name="employeeForm">
+  <form class="form-horizontal" role="form" name="form">
     <div ng-include="'class/people.html'"></div>
-    <div class="form-group">
-      <div class="row">
-        <label class="control-label col-xs-2" for="i_duty">职务</label>
-        <div class="col-xs-3">
-          <select class="form-control" name="duty" id="i_duty"
+    <div class="row">
+      <div class="form-group col-xs-6"
+      ng-class="{'has-error': form.duty.$error.required}">
+        <label class="control-label col-xs-3" for="i_duty">职务</label>
+        <div class="col-xs-6">
+          <select class="form-control" name="duty" id="i_duty" required
           ng-model="d.Duty" ng-options="k as v for (k, v) in pen.dict_duty">
-          <option value="">-- 请选择 --</option>
+            <option value="">-- 请选择 --</option>
           </select>
-        </div><!-- 3 -->
-      </div><!-- row -->
-    </div><!-- form-group -->
+        </div><!-- 6 -->
+        <span class="help-block col-xs-3" ng-show="form.duty.$error.required">不能为空</span>
+      </div><!-- form-group -->
+    </div><!-- row -->
     <div ng-include="'base/base_object.html'"></div>
   </form>
 </div><!-- modal-body -->
 <div class="modal-footer">
-  <button ng-click="employeeForm.$valid?ok():''"
+  <button ng-disabled="!form.$valid" ng-click="ok()"
   class="btn btn-primary">确定</button>
   <button ng-hide="init" class="btn btn-warning" ng-click="cancel()">取消</button>
 </div><!-- modal-footer -->

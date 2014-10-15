@@ -1,12 +1,14 @@
-<div class="form-group">
-  <div class="row">
-    <label class="control-label col-xs-2">创建时间</label>
-    <div class="col-xs-3">
+<div class="row">
+  <div class="form-group col-xs-6">
+    <label class="control-label col-xs-3">创建时间</label>
+    <div class="col-xs-6">
       <p class="form-control-static">{{ d.CreatedAt | date:"yyyy-MM-dd H:mm:ss" }}</p>
     </div><!-- 10 -->
-    <label class="control-label col-xs-2">修改时间</label>
-    <div class="col-xs-3">
+  </div><!-- form-group -->
+  <div class="form-group col-xs-6">
+    <label class="control-label col-xs-3">修改时间</label>
+    <div class="col-xs-6">
       <p class="form-control-static">{{ d.UpdatedAt | date:"yyyy-MM-dd H:mm:ss" }}</p>
     </div><!-- 10 -->
-  </div><!-- row -->
-</div><!-- form-group -->
+  </div><!-- form-group -->
+</div><!-- row -->
