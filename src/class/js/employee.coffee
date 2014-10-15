@@ -10,6 +10,7 @@ EmployeeCtrl= ($scope, $log, $modalInstance, d, pen)->
   $scope.ok = ->
     $log.debug 'ok'
     $log.debug $scope.d
+    $scope.isSend = true
     $scope.pen.send('class', CLASS.编辑雇员, $scope.d)
   $scope.del = ->
     $scope.pen.send('class', CLASS.删除雇员, $scope.d.Id)

@@ -12,7 +12,7 @@
       ng-class="{'has-error': form.duty.$error.required}">
         <label class="control-label col-xs-3" for="i_duty">职务</label>
         <div class="col-xs-6">
-          <select class="form-control" name="duty" id="i_duty" required
+          <select class="form-control" name="duty" id="i_duty" required enter
           ng-model="d.Duty" ng-options="k as v for (k, v) in pen.dict_duty">
             <option value="">-- 请选择 --</option>
           </select>
@@ -24,12 +24,15 @@
   </form>
 </div><!-- modal-body -->
 <div class="modal-footer">
-  <button ng-click="del()" class="btn btn-danger">
+  <button ng-disabled="!form.$valid || isSend" ng-click="ok()" enter="ok()"
+  class="btn btn-primary">
+    <i class="fa fa-spinner fa-spin" ng-show="isSend"></i>
+    确定
+  </button>
+  <button ng-click="del()" ng-disabled="isSend" class="btn btn-danger">
     <i class="fa fa-times"></i>
     删除
   </button>
-  <button ng-disabled="!form.$valid" ng-click="ok()"
-  class="btn btn-primary">确定</button>
   <button ng-hide="init" class="btn btn-warning" ng-click="cancel()">取消</button>
 </div><!-- modal-footer -->
 

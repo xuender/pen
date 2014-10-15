@@ -10,7 +10,7 @@ angular.module('pen', [
   'ngSocket'
   'LocalStorageModule'
   'ngTable'
-  #'hotkey'
+  'hotkey'
   #'angularFileUpload'
   #'textAngular'
 ]).config(['$routeProvider', ($routeProvider)->
