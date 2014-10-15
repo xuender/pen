@@ -4,7 +4,10 @@
   <li class="active">教师</li>
 </ol>
 <div class="btn-group btn-group-lg">
-  <button class="btn btn-default" ng-click="add()">增加</button>
+  <button class="btn btn-default" ng-click="add()">
+    <i class="fa fa-file-o"></i>
+    新增
+  </button>
 </div>
 <table ng-table="tableParams" show-filter="true" class="table">
   <tr ng-repeat="d in $data">
@@ -21,7 +24,10 @@
       {{ d.City }}
     </td>
     <td data-title="'操作'" width="100">
-      <button class="btn btn-default btn-sm" ng-click="edit(d)">编辑</button>
+      <button class="btn btn-default btn-sm" ng-click="edit(d)">
+        <i class="fa fa-edit"></i>
+        编辑
+      </button>
     </td>
   </tr>
 </table>
