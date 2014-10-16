@@ -1,6 +1,7 @@
 package base
 
 import (
+	log "github.com/Sirupsen/logrus"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"time"
@@ -35,7 +36,11 @@ func Db() *gorm.DB {
 
 // 初始化
 func init() {
-	d, err := gorm.Open("postgres", "user=postgres dbname=go password=xcy123 sslmode=disable")
+	log.WithFields(log.Fields{
+		"dialect": PenConfig.Db.Dialect,
+		"source":  PenConfig.Db.GetSource(),
+	}).Debug("db open")
+	d, err := gorm.Open(PenConfig.Db.Dialect, PenConfig.Db.GetSource())
 	if err != nil {
 		panic(err)
 	}

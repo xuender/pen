@@ -3,12 +3,13 @@ package base
 import (
 	"../utils"
 	"encoding/json"
+	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"io/ioutil"
 )
 
 type DataBase struct {
-	Driver   string `json:"driver"`
+	Dialect  string `json:"dialect"`
 	User     string `json:"user"`
 	Dbname   string `json:"dbname"`
 	Password string `json:"password"`
@@ -17,7 +18,8 @@ type DataBase struct {
 
 // 系统配置信息
 type Config struct {
-	Db DataBase `json:"db"`
+	File string   `json:"-"`
+	Db   DataBase `json:"db"`
 }
 
 // 加密数据库信息
@@ -32,12 +34,17 @@ func (db *DataBase) encode() bool {
 	return false
 }
 
+// 数据库连接
+func (db *DataBase) GetSource() string {
+	return fmt.Sprintf("user=%s dbname=%s password=%s sslmode=%s", db.User, db.Dbname, db.Password, db.Sslmode)
+}
+
 // 读取配置文件
 func (config *Config) read(file string) error {
+	config.File = file
 	log.WithFields(log.Fields{
 		"File": file,
 	}).Debug("读取配置文件")
-
 	bytes, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -65,8 +72,11 @@ func (config *Config) save() error {
 	log.WithFields(log.Fields{
 		"db": config.Db,
 	}).Debug("save")
-
-	return nil
+	bs, err := json.MarshalIndent(config, " ", " ")
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(config.File, bs, 0600)
 }
 
 var PenConfig Config
