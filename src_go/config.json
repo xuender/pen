@@ -1,0 +1,9 @@
+{
+  "db":{
+    "driver":"postgresql",
+    "user":"postgres",
+    "dbname":"go",
+    "password":"xcy123",
+    "sslmode":"disable"
+  }
+}

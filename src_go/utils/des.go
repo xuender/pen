@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/cipher"
 	"crypto/des"
+	"errors"
 	"fmt"
 	"strconv"
 )
@@ -29,10 +30,16 @@ func blockAdding(ciphertext []byte, blockSize int) []byte {
 }
 
 // 解密
-func Decrypt(crypte, password string) (string, error) {
-	in := make([]byte, len(crypte)/2)
-	for i := 0; i < len(crypte); i += 2 {
-		n, _ := strconv.ParseInt(crypte[i:i+2], 16, 64)
+func Decrypt(crypted, password string) (ret string, err error) {
+	defer func() {
+		e := recover()
+		if e != nil {
+			err = errors.New("无法解密")
+		}
+	}()
+	in := make([]byte, len(crypted)/2)
+	for i := 0; i < len(crypted); i += 2 {
+		n, _ := strconv.ParseInt(crypted[i:i+2], 16, 64)
 		in[i/2] = byte(n)
 	}
 	key := []byte(password[0:8])
@@ -44,7 +51,8 @@ func Decrypt(crypte, password string) (string, error) {
 	out := make([]byte, len(in))
 	decrypter.CryptBlocks(out, in)
 	out = unpadding(out)
-	return string(out), nil
+	ret = string(out)
+	return
 }
 func unpadding(data []byte) []byte {
 	length := len(data)

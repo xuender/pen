@@ -22,3 +22,13 @@ func TestDecrypt(t *testing.T) {
 		t.Errorf("解密错误")
 	}
 }
+func TestError(t *testing.T) {
+	_, e := Decrypt("165", "123321321")
+	if e == nil {
+		t.Errorf("解密异常")
+	}
+	_, e = Decrypt("65", "123321321")
+	if e == nil {
+		t.Errorf("解密异常")
+	}
+}
