@@ -25,8 +25,8 @@ MENUS = [
         object: {
           code: 'base'
           templateUrl: 'base/user.html'
-          controller: 'EmployeeCtrl'
-          getId: BASE.用户列表
+          controller: 'UserCtrl'
+          getId: BASE.用户查询
         }
       }
       {

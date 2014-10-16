@@ -19,7 +19,7 @@ MENUS.push(
           code: 'class'
           templateUrl: 'class/employee.html'
           controller: 'EmployeeCtrl'
-          getId: CLASS.雇员
+          getId: CLASS.雇员查询
         }
       }
       {
@@ -32,7 +32,7 @@ MENUS.push(
           code: 'class'
           templateUrl: 'class/teacher.html'
           controller: 'TeacherCtrl'
-          getId: CLASS.教师
+          getId: CLASS.教师查询
         }
       }
       {
@@ -43,11 +43,17 @@ MENUS.push(
         menu: true
       }
       {
-        templateUrl: 'class/teacher.html'
-        controller: 'TeacherCtrl'
+        templateUrl: 'class/students.html'
+        controller: 'ObjectsCtrl'
         name: '学员'
-        url: '/teacher3'
+        url: '/students'
         menu: true
+        object: {
+          code: 'class'
+          templateUrl: 'class/student.html'
+          controller: 'StudentCtrl'
+          getId: CLASS.学员查询
+        }
       }
     ]
   }

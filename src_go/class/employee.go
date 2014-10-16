@@ -82,9 +82,9 @@ func delEmployeeEvent(data *string, session base.Session) (ret interface{}, err 
 	return
 }
 func init() {
-	base.RegisterEvent(Code, 雇员, getEmployeeEvent)
-	base.RegisterEvent(Code, 编辑雇员, updateEmployeeEvent)
-	base.RegisterEvent(Code, 删除雇员, delEmployeeEvent)
+	base.RegisterEvent(Code, 雇员查询, getEmployeeEvent)
+	base.RegisterEvent(Code, 雇员编辑, updateEmployeeEvent)
+	base.RegisterEvent(Code, 雇员删除, delEmployeeEvent)
 	if db.CreateTable(&ClassEmployee{}).Error == nil {
 		log.WithFields(log.Fields{
 			"name": "ClassVolunteer",

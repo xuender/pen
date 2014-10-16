@@ -48,7 +48,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
   )
   $scope.registerEvent('base', BASE.登录, $scope.eventLogin)
   $scope.registerEvent('base', BASE.人数, $scope.eventCount)
-  $scope.registerEvent('base', BASE.字典, (data)->
+  $scope.registerEvent('base', BASE.字典获取, (data)->
     $log.debug("dict....."+data)
     d = JSON.parse(data)
     $log.debug(d)

@@ -11,16 +11,17 @@ EmployeeCtrl= ($scope, $log, $modalInstance, d, pen)->
     $log.debug 'ok'
     $log.debug $scope.d
     $scope.isSend = true
-    $scope.pen.send('class', CLASS.编辑雇员, $scope.d)
+    $scope.pen.send('class', CLASS.雇员编辑, $scope.d)
   $scope.del = ->
-    $scope.pen.send('class', CLASS.删除雇员, $scope.d.Id)
+    $scope.isSend = true
+    $scope.pen.send('class', CLASS.雇员删除, $scope.d.Id)
   $scope.cancel = ->
     $modalInstance.dismiss('cancel')
-  $scope.pen.registerEvent('class', CLASS.编辑雇员, (data)->
+  $scope.pen.registerEvent('class', CLASS.雇员编辑, (data)->
     if 'ok' == data
       $modalInstance.close($scope.d)
   )
-  $scope.pen.registerEvent('class', CLASS.删除雇员, (data)->
+  $scope.pen.registerEvent('class', CLASS.雇员删除, (data)->
     if 'ok' == data
       $modalInstance.close($scope.d)
   )

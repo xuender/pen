@@ -72,7 +72,7 @@ func (u *Dict) publish() {
 	//tm.Dict[u.Code] = u.Title
 	for ws, session := range onlines {
 		if session.IsLogin {
-			Send(ws, Code, 字典, tm)
+			Send(ws, Code, 字典获取, tm)
 		}
 	}
 }
@@ -98,14 +98,14 @@ func dictSend(t string, ws *websocket.Conn) {
 	var tm DictMessage
 	tm.Type = t
 	tm.read()
-	Send(ws, Code, 字典, tm)
+	Send(ws, Code, 字典获取, tm)
 }
 
 // 查看字典
 func getDictEvent(data *string, ws *websocket.Conn, session Session) {
 	var ds []Dict
 	db.Where("type = ?", data).Find(&ds)
-	Send(ws, Code, 查看字典, ds)
+	Send(ws, Code, 字典查询, ds)
 }
 
 // 修改字典
@@ -119,7 +119,7 @@ func updateDictEvent(data *string, ws *websocket.Conn, session Session) {
 		e := db.Save(&d).Error
 		if e == nil {
 			d.publish()
-			Send(ws, Code, 修改字典, "ok")
+			Send(ws, Code, 字典编辑, "ok")
 		} else {
 			log.Debug(e)
 			Send(ws, Code, MSG, e)
@@ -132,7 +132,7 @@ func updateDictEvent(data *string, ws *websocket.Conn, session Session) {
 		e := db.Save(&o).Error
 		if e == nil {
 			o.publish()
-			Send(ws, Code, 修改字典, "ok")
+			Send(ws, Code, 字典编辑, "ok")
 		} else {
 			log.Debug(e)
 			Send(ws, Code, MSG, e)
@@ -143,8 +143,8 @@ func updateDictEvent(data *string, ws *websocket.Conn, session Session) {
 // 初始化
 func init() {
 	RegisterEvent(Code, 字典版本, dictVerEvent)
-	RegisterEvent(Code, 查看字典, getDictEvent)
-	RegisterEvent(Code, 修改字典, updateDictEvent)
+	RegisterEvent(Code, 字典查询, getDictEvent)
+	RegisterEvent(Code, 字典编辑, updateDictEvent)
 	if db.CreateTable(&Dict{}).Error == nil {
 		db.Model(&Dict{}).AddUniqueIndex("idx_dict_code", "type", "code")
 	} else {

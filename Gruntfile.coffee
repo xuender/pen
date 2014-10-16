@@ -242,6 +242,7 @@ module.exports = (grunt)->
             'src/class/js/init.coffee'
             'src/class/js/employee.coffee'
             'src/class/js/teacher.coffee'
+            'src/class/js/student.coffee'
           ]
     uglify:
       main:

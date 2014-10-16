@@ -47,7 +47,7 @@ func userAllEvent(data *string, ws *websocket.Conn, session Session) {
 	//TODO 权限认证
 	var users []User
 	db.Find(&users)
-	Send(ws, Code, 用户列表, users)
+	Send(ws, Code, 用户查询, users)
 }
 
 func updateUserEvent(data *string, ws *websocket.Conn, session Session) {
@@ -61,7 +61,7 @@ func updateUserEvent(data *string, ws *websocket.Conn, session Session) {
 		e := db.Save(&u).Error
 		if e == nil {
 			//d.publish()
-			Send(ws, Code, 修改用户, "ok")
+			Send(ws, Code, 用户编辑, "ok")
 		} else {
 			log.Debug(e)
 			Send(ws, Code, MSG, e)
@@ -74,7 +74,7 @@ func updateUserEvent(data *string, ws *websocket.Conn, session Session) {
 		e := db.Save(&o).Error
 		if e == nil {
 			//o.publish()
-			Send(ws, Code, 修改用户, "ok")
+			Send(ws, Code, 用户编辑, "ok")
 		} else {
 			log.Debug(e)
 			Send(ws, Code, MSG, e)
@@ -84,8 +84,8 @@ func updateUserEvent(data *string, ws *websocket.Conn, session Session) {
 
 // 初始化
 func init() {
-	RegisterEvent(Code, 用户列表, userAllEvent)
-	RegisterEvent(Code, 修改用户, updateUserEvent)
+	RegisterEvent(Code, 用户查询, userAllEvent)
+	RegisterEvent(Code, 用户编辑, updateUserEvent)
 	// 数据库初始化
 	if db.CreateTable(&User{}).Error == nil {
 		db.Model(&User{}).AddUniqueIndex("idx_user_nick", "nick")

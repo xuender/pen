@@ -48,7 +48,7 @@ DictCtrl = ($scope, $log, $route, $routeParams, ngTableParams, $filter)->
     #d.$edit = false
     if update
       update = false
-      $scope.send('base', BASE.修改字典, d)
+      $scope.send('base', BASE.字典编辑, d)
   $scope.add = ->
     # 增加
     $log.debug 'add...'
@@ -58,14 +58,14 @@ DictCtrl = ($scope, $log, $route, $routeParams, ngTableParams, $filter)->
     )
     $scope.tableParams.reload()
     $log.debug $scope.dict
-  $scope.registerEvent('base', BASE.修改字典, (data)->
+  $scope.registerEvent('base', BASE.字典编辑, (data)->
     if 'ok' == data
       $scope.current.$edit = false
-      $scope.send('base', BASE.查看字典, $scope.type)
+      $scope.send('base', BASE.字典查询, $scope.type)
   )
-  $scope.registerEvent('base', BASE.查看字典, $scope.readDict)
+  $scope.registerEvent('base', BASE.字典查询, $scope.readDict)
   $scope.ready(->
-    $scope.send('base', BASE.查看字典, $scope.type)
+    $scope.send('base', BASE.字典查询, $scope.type)
   )
 
 DictCtrl.$inject = [

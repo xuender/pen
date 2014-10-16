@@ -1,0 +1,33 @@
+<ol class="breadcrumb">
+  <li><a href="#">首页</a></li>
+  <li>学习班</li>
+  <li class="active">学员</li>
+</ol>
+<div class="btn-group btn-group-lg">
+  <button class="btn btn-default" ng-click="add()">
+    <i class="fa fa-file-o"></i>
+    新增
+  </button>
+</div>
+<table ng-table="tableParams" show-filter="true" class="table">
+  <tr ng-repeat="d in $data">
+    <td data-title="'姓名'" sortable="'Name'" filter="{'Name': 'text'}">
+      {{ d.Name }}
+    </td>
+    <td data-title="'性别'" sortable="'Gender'" filter="{'Gender': 'select'}" filter-data="getDict('gender')">
+      {{ dict_gender[d.Gender] }}
+    </td>
+    <td data-title="'入学日期'" sortable="'StartAt'" filter="{'StartAt': 'text'}">
+      {{ d.StartAt | date:"yyyy-MM-dd" }}
+    </td>
+    <td data-title="'城市'" sortable="'City'" filter="{'City': 'text'}">
+      {{ d.City }}
+    </td>
+    <td data-title="'操作'" width="100">
+      <button class="btn btn-default btn-sm" ng-click="edit(d)">
+        <i class="fa fa-edit"></i>
+        编辑
+      </button>
+    </td>
+  </tr>
+</table>

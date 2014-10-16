@@ -7,29 +7,29 @@ import (
 	"time"
 )
 
-// 教师
-type ClassTeacher struct {
+// 学生
+type ClassStudent struct {
 	base.BaseObject
 	ClassPeople `sql:"-"`
 	PeopleId    int64
-	// 执教日期
+	// 入学日期
 	StartAt time.Time
 }
 
-// 获取教师信息列表
-func getTeacherEvent(data *string, session base.Session) (interface{}, error) {
-	var vs []ClassTeacher
+// 获取学生信息列表
+func getStudentEvent(data *string, session base.Session) (interface{}, error) {
+	var vs []ClassStudent
 	db.Find(&vs)
-	var ret []ClassTeacher
+	var ret []ClassStudent
 	for _, v := range vs {
 		db.First(&v.ClassPeople, v.PeopleId)
 		ret = append(ret, v)
 	}
 	return ret, nil
 }
-func updateTeacherEvent(data *string, session base.Session) (ret interface{}, err error) {
+func updateStudentEvent(data *string, session base.Session) (ret interface{}, err error) {
 	ret = "ok"
-	var e ClassTeacher
+	var e ClassStudent
 	json.Unmarshal([]byte(*data), &e)
 	if e.Id == 0 { //增加
 		p := e.ClassPeople
@@ -37,7 +37,7 @@ func updateTeacherEvent(data *string, session base.Session) (ret interface{}, er
 		e.PeopleId = p.Id
 		err = db.Save(&e).Error
 	} else { //修改
-		var o ClassTeacher
+		var o ClassStudent
 		var p ClassPeople
 		db.First(&o, e.Id)
 		db.Save(&e)
@@ -49,15 +49,15 @@ func updateTeacherEvent(data *string, session base.Session) (ret interface{}, er
 	return
 }
 
-// 删除老师
-func delTeacherEvent(data *string, session base.Session) (ret interface{}, err error) {
+// 删除学员
+func delStudentEvent(data *string, session base.Session) (ret interface{}, err error) {
 	ret = "ok"
 	var id int64
 	json.Unmarshal([]byte(*data), &id)
 	log.WithFields(log.Fields{
 		"ID": id,
-	}).Debug("删除老师")
-	var e ClassTeacher
+	}).Debug("删除学员")
+	var e ClassStudent
 	err = db.First(&e, id).Error
 	if err == nil {
 		err = db.Delete(&e).Error
@@ -65,8 +65,8 @@ func delTeacherEvent(data *string, session base.Session) (ret interface{}, err e
 	return
 }
 func init() {
-	base.RegisterEvent(Code, 教师查询, getTeacherEvent)
-	base.RegisterEvent(Code, 教师编辑, updateTeacherEvent)
-	base.RegisterEvent(Code, 教师删除, delTeacherEvent)
-	db.AutoMigrate(&ClassTeacher{})
+	base.RegisterEvent(Code, 学员查询, getStudentEvent)
+	base.RegisterEvent(Code, 学员编辑, updateStudentEvent)
+	base.RegisterEvent(Code, 学员删除, delStudentEvent)
+	db.AutoMigrate(&ClassStudent{})
 }
