@@ -9,10 +9,30 @@ import (
 	"strconv"
 )
 
+func getPassword(password string) []byte {
+	if len(password) > 7 {
+		return []byte(password[0:8])
+	}
+	if len(password) == 0 {
+		return []byte("xuender@")
+	}
+	o := make([]byte, 8)
+	f := 0
+	p := []byte(password)
+	for i := 0; i < 8; i++ {
+		o[i] = p[f]
+		f++
+		if f >= len(p) {
+			f = 0
+		}
+	}
+	return o
+}
+
 // 加密
 func Encrypt(orig, password string) (string, error) {
 	in := []byte(orig)
-	key := []byte(password[0:8])
+	key := getPassword(password)
 	block, err := des.NewCipher(key)
 	if err != nil {
 		return "", err
@@ -42,7 +62,7 @@ func Decrypt(crypted, password string) (ret string, err error) {
 		n, _ := strconv.ParseInt(crypted[i:i+2], 16, 64)
 		in[i/2] = byte(n)
 	}
-	key := []byte(password[0:8])
+	key := getPassword(password)
 	block, err := des.NewCipher(key)
 	if err != nil {
 		return "", err
