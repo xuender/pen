@@ -15,6 +15,9 @@ import (
 
 func main() {
 	log.Info("启动")
+	//读取配置文件
+	base.BaseConfig.Read("config.json")
+	base.InitDb()
 	// 检查文件完整性
 	//err := base.CheckFiles()
 	//if(err!=nil){
@@ -36,9 +39,9 @@ func main() {
 	m.NotFound(func(r render.Render) {
 		r.HTML(404, "404", nil)
 	})
-	log.Info("访问地址 http://localhost:" + base.PenConfig.Web.Port)
+	log.Info("访问地址 http://localhost:" + base.BaseConfig.Web.Port)
 	// 端口号
-	http.ListenAndServe(":"+base.PenConfig.Web.Port, m)
+	http.ListenAndServe(":"+base.BaseConfig.Web.Port, m)
 	// m.Run()
 	log.Info("退出")
 }

@@ -145,22 +145,26 @@ func init() {
 	RegisterEvent(Code, 字典版本, dictVerEvent)
 	RegisterEvent(Code, 字典查询, getDictEvent)
 	RegisterEvent(Code, 字典编辑, updateDictEvent)
-	if db.CreateTable(&Dict{}).Error == nil {
-		db.Model(&Dict{}).AddUniqueIndex("idx_dict_code", "type", "code")
-	} else {
-		db.AutoMigrate(&Dict{})
-	}
-	if db.CreateTable(&DictVer{}).Error == nil {
-		db.Model(&DictVer{}).AddUniqueIndex("idx_dict_ver", "type")
-	} else {
-		db.AutoMigrate(&DictVer{})
-	}
-	errorMessage["idx_dict_code"] = "字典代码不能重复"
-	var dvs []DictVer
-	db.Find(&dvs)
-	for _, dv := range dvs {
-		dictMap[dv.Type] = dv.Ver
-	}
+
+	meta.AddDbFunc(func() {
+		if db.CreateTable(&Dict{}).Error == nil {
+			db.Model(&Dict{}).AddUniqueIndex("idx_dict_code", "type", "code")
+		} else {
+			db.AutoMigrate(&Dict{})
+		}
+		if db.CreateTable(&DictVer{}).Error == nil {
+			db.Model(&DictVer{}).AddUniqueIndex("idx_dict_ver", "type")
+		} else {
+			db.AutoMigrate(&DictVer{})
+		}
+		errorMessage["idx_dict_code"] = "字典代码不能重复"
+		var dvs []DictVer
+		db.Find(&dvs)
+		for _, dv := range dvs {
+			dictMap[dv.Type] = dv.Ver
+		}
+	})
+
 	//db.Create(&Dict{
 	//	Type:  "type",
 	//	Code:  "gender",

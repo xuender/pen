@@ -86,24 +86,26 @@ func updateUserEvent(data *string, ws *websocket.Conn, session Session) {
 func init() {
 	RegisterEvent(Code, 用户查询, userAllEvent)
 	RegisterEvent(Code, 用户编辑, updateUserEvent)
-	// 数据库初始化
-	if db.CreateTable(&User{}).Error == nil {
-		db.Model(&User{}).AddUniqueIndex("idx_user_nick", "nick")
-		// 创建管理员
-		e := User{
-			Nick:     "ender",
-			Gender:   "M",
-			Email:    "xuender@gmail.com",
-			Password: "40b0dada4577cd2a27d93ee392fa9a4f",
+	meta.AddDbFunc(func() {
+		// 数据库初始化
+		if db.CreateTable(&User{}).Error == nil {
+			db.Model(&User{}).AddUniqueIndex("idx_user_nick", "nick")
+			// 创建管理员
+			e := User{
+				Nick:     "ender",
+				Gender:   "M",
+				Email:    "xuender@gmail.com",
+				Password: "40b0dada4577cd2a27d93ee392fa9a4f",
+			}
+			log.WithFields(log.Fields{
+				"id": e.Id,
+			}).Debug("增加管理员")
+			db.Create(&e)
+			db.Save(&Dict{Type: "type", Code: "gender", Title: "性别"})
+			db.Save(&Dict{Type: "gender", Code: "M", Title: "男"})
+			db.Save(&Dict{Type: "gender", Code: "F", Title: "女"})
+		} else {
+			db.AutoMigrate(&User{})
 		}
-		log.WithFields(log.Fields{
-			"id": e.Id,
-		}).Debug("增加管理员")
-		db.Create(&e)
-		db.Save(&Dict{Type: "type", Code: "gender", Title: "性别"})
-		db.Save(&Dict{Type: "gender", Code: "M", Title: "男"})
-		db.Save(&Dict{Type: "gender", Code: "F", Title: "女"})
-	} else {
-		db.AutoMigrate(&User{})
-	}
+	})
 }

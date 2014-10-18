@@ -15,17 +15,6 @@ type BaseObject struct {
 	DeletedAt time.Time
 }
 
-//func (u *BaseObject) BeforeCreate() (err error) {
-//	u.CreatedAt = time.Now()
-//	u.UpdatedAt = u.CreatedAt
-//	return
-//}
-//
-//func (u *BaseObject) BeforeUpdate() (err error) {
-//	u.UpdatedAt = time.Now()
-//	return
-//}
-
 // 全局数据库操作对象
 var db gorm.DB
 
@@ -33,14 +22,11 @@ var db gorm.DB
 func Db() *gorm.DB {
 	return &db
 }
-
-// 初始化
-func init() {
+func InitDb() {
 	log.WithFields(log.Fields{
-		"dialect": PenConfig.Db.Dialect,
-		"source":  PenConfig.Db.GetSource(),
-	}).Debug("db open")
-	d, err := gorm.Open(PenConfig.Db.Dialect, PenConfig.Db.GetSource())
+		"dialect": BaseConfig.Db.Dialect,
+	}).Debug("InitDb")
+	d, err := gorm.Open(BaseConfig.Db.Dialect, BaseConfig.Db.GetSource())
 	if err != nil {
 		panic(err)
 	}
@@ -49,4 +35,17 @@ func init() {
 	d.DB().SetMaxOpenConns(100)
 	d.SingularTable(true)
 	db = d
+	if !BaseConfig.Db.Init {
+		BaseConfig.Db.Init = true
+		BaseConfig.Save()
+		for _, m := range metas {
+			log.WithFields(log.Fields{
+				"code": m.Code,
+			}).Debug("meta")
+			for _, f := range m.DbFuncs {
+				log.Debug("func")
+				f()
+			}
+		}
+	}
 }

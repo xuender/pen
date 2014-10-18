@@ -68,5 +68,7 @@ func init() {
 	base.RegisterEvent(Code, 学员查询, getStudentEvent)
 	base.RegisterEvent(Code, 学员编辑, updateStudentEvent)
 	base.RegisterEvent(Code, 学员删除, delStudentEvent)
-	db.AutoMigrate(&ClassStudent{})
+	meta.AddDbFunc(func() {
+		db.AutoMigrate(&ClassStudent{})
+	})
 }

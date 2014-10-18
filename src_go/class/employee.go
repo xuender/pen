@@ -85,17 +85,19 @@ func init() {
 	base.RegisterEvent(Code, 雇员查询, getEmployeeEvent)
 	base.RegisterEvent(Code, 雇员编辑, updateEmployeeEvent)
 	base.RegisterEvent(Code, 雇员删除, delEmployeeEvent)
-	if db.CreateTable(&ClassEmployee{}).Error == nil {
-		log.WithFields(log.Fields{
-			"name": "ClassVolunteer",
-		}).Debug("初始化表")
-		db.Save(&base.Dict{Type: "type", Code: "duty", Title: "职务"})
-		db.Save(&base.Dict{Type: "duty", Code: "CS", Title: "厨师"})
-		db.Save(&base.Dict{Type: "duty", Code: "BJ", Title: "保洁"})
-		db.Save(&base.Dict{Type: "duty", Code: "ZW", Title: "杂务"})
-	} else {
-		db.AutoMigrate(&ClassEmployee{})
-	}
+	meta.AddDbFunc(func() {
+		if db.CreateTable(&ClassEmployee{}).Error == nil {
+			log.WithFields(log.Fields{
+				"name": "ClassVolunteer",
+			}).Debug("初始化表")
+			db.Save(&base.Dict{Type: "type", Code: "duty", Title: "职务"})
+			db.Save(&base.Dict{Type: "duty", Code: "CS", Title: "厨师"})
+			db.Save(&base.Dict{Type: "duty", Code: "BJ", Title: "保洁"})
+			db.Save(&base.Dict{Type: "duty", Code: "ZW", Title: "杂务"})
+		} else {
+			db.AutoMigrate(&ClassEmployee{})
+		}
+	})
 	//db.Save(&ClassPeople{Name:"测试"})
 	//db.Save(&ClassPeople{Name:"王五"})
 	//db.Save(&ClassEmployee{Duty:"BJ"})

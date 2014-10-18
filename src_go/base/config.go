@@ -15,6 +15,7 @@ type DataBaseConfig struct {
 	Dbname   string `json:"dbname"`
 	Password string `json:"password"`
 	Sslmode  string `json:"sslmode"`
+	Init     bool   `json:"init"`
 }
 
 // 网络配置
@@ -47,7 +48,7 @@ func (db *DataBaseConfig) GetSource() string {
 }
 
 // 读取配置文件
-func (config *Config) read(file string) error {
+func (config *Config) Read(file string) error {
 	config.File = file
 	log.WithFields(log.Fields{
 		"File": file,
@@ -66,16 +67,17 @@ func (config *Config) read(file string) error {
 		return err
 	}
 	if config.Db.encode() {
-		config.save()
+		config.Save()
 	}
 	log.WithFields(log.Fields{
-		"db": config.Db,
+		"db":  config.Db,
+		"web": config.Web,
 	}).Debug("config")
 	return nil
 }
 
 // 保存配置文件
-func (config *Config) save() error {
+func (config *Config) Save() error {
 	log.WithFields(log.Fields{
 		"db": config.Db,
 	}).Debug("save")
@@ -86,8 +88,4 @@ func (config *Config) save() error {
 	return ioutil.WriteFile(config.File, bs, 0600)
 }
 
-var PenConfig Config
-
-func init() {
-	PenConfig.read("config.json")
-}
+var BaseConfig Config

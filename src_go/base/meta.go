@@ -3,6 +3,7 @@ package base
 import (
 	"errors"
 	"fmt"
+	log "github.com/Sirupsen/logrus"
 	"strings"
 )
 
@@ -12,6 +13,12 @@ type Meta struct {
 	Code        string
 	Description string
 	Action      map[uint]string
+	DbFuncs     []func()
+}
+
+// 增加数据库初始化方法
+func (m *Meta) AddDbFunc(f func()) {
+	m.DbFuncs = append(m.DbFuncs, f)
 }
 
 var metas []Meta
@@ -19,6 +26,10 @@ var metas []Meta
 // 注册元信息
 func RegisterMeta(meta Meta) {
 	metas = append(metas, meta)
+	log.WithFields(log.Fields{
+		"Code":   meta.Code,
+		"Action": meta.Action,
+	}).Debug("枚举")
 }
 
 // 获取注册元信息
