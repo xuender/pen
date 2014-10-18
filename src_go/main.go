@@ -36,6 +36,9 @@ func main() {
 	m.NotFound(func(r render.Render) {
 		r.HTML(404, "404", nil)
 	})
-	m.Run()
+	log.Info("访问地址 http://localhost:" + base.PenConfig.Web.Port)
+	// 端口号
+	http.ListenAndServe(":"+base.PenConfig.Web.Port, m)
+	// m.Run()
 	log.Info("退出")
 }

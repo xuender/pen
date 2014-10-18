@@ -5,5 +5,8 @@
    "dbname": "go",
    "password": "833C8C627AC249E0",
    "sslmode": "disable"
+  },
+  "web": {
+   "port": "4000"
   }
  }

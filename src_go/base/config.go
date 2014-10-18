@@ -8,7 +8,8 @@ import (
 	"io/ioutil"
 )
 
-type DataBase struct {
+// 数据库配置
+type DataBaseConfig struct {
 	Dialect  string `json:"dialect"`
 	User     string `json:"user"`
 	Dbname   string `json:"dbname"`
@@ -16,14 +17,20 @@ type DataBase struct {
 	Sslmode  string `json:"sslmode"`
 }
 
+// 网络配置
+type WebConfig struct {
+	Port string `json:"port"`
+}
+
 // 系统配置信息
 type Config struct {
-	File string   `json:"-"`
-	Db   DataBase `json:"db"`
+	File string         `json:"-"`
+	Db   DataBaseConfig `json:"db"`
+	Web  WebConfig      `json:"web"`
 }
 
 // 加密数据库信息
-func (db *DataBase) encode() bool {
+func (db *DataBaseConfig) encode() bool {
 	old := db.Password
 	var err error
 	db.Password, err = utils.Decrypt(db.Password, "xuender@gmail.com")
@@ -35,7 +42,7 @@ func (db *DataBase) encode() bool {
 }
 
 // 数据库连接
-func (db *DataBase) GetSource() string {
+func (db *DataBaseConfig) GetSource() string {
 	return fmt.Sprintf("user=%s dbname=%s password=%s sslmode=%s", db.User, db.Dbname, db.Password, db.Sslmode)
 }
 
