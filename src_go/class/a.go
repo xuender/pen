@@ -39,6 +39,6 @@ var meta = base.Meta{Name: "学习班", Code: Code, Description: "学习班管�
 }}
 
 func init() {
-	base.RegisterMeta(meta)
+	base.RegisterMeta(&meta)
 	db = base.Db()
 }

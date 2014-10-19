@@ -38,14 +38,11 @@ type Config struct {
 
 // 加密数据库信息
 func (db *DataBaseConfig) encode() bool {
-	old := db.Password
-	var err error
-	db.Password, err = utils.Decrypt(db.Password, "xuender@gmail.com")
-	if err != nil {
-		db.Password, _ = utils.Encrypt(old, "xuender@gmail.com")
-		return true
+	p, err := utils.Decrypt(db.Password, "xuender@gmail.com")
+	if err == nil {
+		db.Password = p
 	}
-	return false
+	return err != nil
 }
 
 // 数据库连接
@@ -79,6 +76,7 @@ func (config *Config) Read(file string) error {
 		log.SetLevel(log.DebugLevel)
 	}
 	log.WithFields(log.Fields{
+		"db":  config.Db,
 		"web": config.Web,
 		"dev": config.Dev,
 	}).Debug("config")
@@ -90,7 +88,10 @@ func (config *Config) Save() error {
 	log.WithFields(log.Fields{
 		"db": config.Db,
 	}).Debug("save")
+	old := config.Db.Password
+	config.Db.Password, _ = utils.Encrypt(old, "xuender@gmail.com")
 	bs, err := json.MarshalIndent(config, " ", " ")
+	config.Db.Password = old
 	if err != nil {
 		return err
 	}

@@ -2,8 +2,6 @@ package class
 
 import (
 	"../base"
-	//"database/sql"
-	//"code.google.com/p/go.net/websocket"
 	"encoding/json"
 	log "github.com/Sirupsen/logrus"
 )

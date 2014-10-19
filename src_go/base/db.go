@@ -46,7 +46,6 @@ func InitDb() {
 		BaseConfig.Save()
 		for _, m := range metas {
 			for _, f := range m.DbFuncs {
-				log.Debug("func")
 				f()
 			}
 		}

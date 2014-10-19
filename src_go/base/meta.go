@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	//  log "github.com/Sirupsen/logrus"
 )
 
 // 模块元信息
@@ -20,10 +21,10 @@ func (m *Meta) AddDbFunc(f func()) {
 	m.DbFuncs = append(m.DbFuncs, f)
 }
 
-var metas []Meta
+var metas []*Meta
 
 // 注册元信息
-func RegisterMeta(meta Meta) {
+func RegisterMeta(meta *Meta) {
 	metas = append(metas, meta)
 }
 
@@ -84,11 +85,11 @@ func (r Meta) addAction(power int64, actions ...uint) int64 {
 }
 
 // 查找元信息
-func GetMeta(code string) (Meta, error) {
+func GetMeta(code string) (*Meta, error) {
 	for _, m := range metas {
 		if m.Code == code {
 			return m, nil
 		}
 	}
-	return Meta{}, errors.New("code没有找到")
+	return nil, errors.New("code没有找到")
 }

@@ -33,5 +33,5 @@ var meta = Meta{Name: "基本功能", Code: Code, Description: "用户管理、�
 }}
 
 func init() {
-	RegisterMeta(meta)
+	RegisterMeta(&meta)
 }
