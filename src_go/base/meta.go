@@ -3,7 +3,6 @@ package base
 import (
 	"errors"
 	"fmt"
-	log "github.com/Sirupsen/logrus"
 	"strings"
 )
 
@@ -26,10 +25,6 @@ var metas []Meta
 // 注册元信息
 func RegisterMeta(meta Meta) {
 	metas = append(metas, meta)
-	log.WithFields(log.Fields{
-		"Code":   meta.Code,
-		"Action": meta.Action,
-	}).Debug("枚举")
 }
 
 // 获取注册元信息

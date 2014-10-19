@@ -5,6 +5,7 @@ import (
 	"./base"
 	_ "./class"
 	"code.google.com/p/go.net/websocket"
+	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/gzip"
@@ -17,6 +18,7 @@ func main() {
 	log.Info("启动")
 	//读取配置文件
 	base.BaseConfig.Read("config.json")
+	// 初始化数据库
 	base.InitDb()
 	// 检查文件完整性
 	//err := base.CheckFiles()
@@ -39,9 +41,9 @@ func main() {
 	m.NotFound(func(r render.Render) {
 		r.HTML(404, "404", nil)
 	})
-	log.Info("访问地址 http://localhost:" + base.BaseConfig.Web.Port)
+	log.Info(fmt.Sprintf("访问地址 http://localhost:%d", base.BaseConfig.Web.Port))
 	// 端口号
-	http.ListenAndServe(":"+base.BaseConfig.Web.Port, m)
+	http.ListenAndServe(fmt.Sprintf(":%d", base.BaseConfig.Web.Port), m)
 	// m.Run()
 	log.Info("退出")
 }

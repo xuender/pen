@@ -35,13 +35,16 @@ func InitDb() {
 	d.DB().SetMaxOpenConns(100)
 	d.SingularTable(true)
 	db = d
-	if !BaseConfig.Db.Init {
-		BaseConfig.Db.Init = true
+	for _, m := range metas {
+		log.WithFields(log.Fields{
+			"code":   m.Code,
+			"Action": m.Action,
+		}).Debug("meta")
+	}
+	if BaseConfig.Db.Init {
+		BaseConfig.Db.Init = false
 		BaseConfig.Save()
 		for _, m := range metas {
-			log.WithFields(log.Fields{
-				"code": m.Code,
-			}).Debug("meta")
 			for _, f := range m.DbFuncs {
 				log.Debug("func")
 				f()

@@ -20,7 +20,12 @@ type DataBaseConfig struct {
 
 // 网络配置
 type WebConfig struct {
-	Port string `json:"port"`
+	Port int `json:"port"`
+}
+
+// 开发配置
+type DevConfig struct {
+	Debug bool `json:"debug"`
 }
 
 // 系统配置信息
@@ -28,6 +33,7 @@ type Config struct {
 	File string         `json:"-"`
 	Db   DataBaseConfig `json:"db"`
 	Web  WebConfig      `json:"web"`
+	Dev  DevConfig      `json:"dev"`
 }
 
 // 加密数据库信息
@@ -69,9 +75,12 @@ func (config *Config) Read(file string) error {
 	if config.Db.encode() {
 		config.Save()
 	}
+	if config.Dev.Debug {
+		log.SetLevel(log.DebugLevel)
+	}
 	log.WithFields(log.Fields{
-		"db":  config.Db,
 		"web": config.Web,
+		"dev": config.Dev,
 	}).Debug("config")
 	return nil
 }
