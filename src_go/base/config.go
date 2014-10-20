@@ -36,18 +36,25 @@ type Config struct {
 	Dev  DevConfig      `json:"dev"`
 }
 
+var defaultPassword = "xuender@gmail.com"
+
 // 加密数据库信息
 func (db *DataBaseConfig) encode() bool {
-	p, err := utils.Decrypt(db.Password, "xuender@gmail.com")
-	if err == nil {
-		db.Password = p
+	_, err := utils.Decrypt(db.Password, defaultPassword)
+	if err != nil {
+		db.Password, _ = utils.Encrypt(db.Password, defaultPassword)
 	}
 	return err != nil
 }
 
 // 数据库连接
 func (db *DataBaseConfig) GetSource() string {
-	return fmt.Sprintf("user=%s dbname=%s password=%s sslmode=%s", db.User, db.Dbname, db.Password, db.Sslmode)
+	p, err := utils.Decrypt(db.Password, defaultPassword)
+	if err != nil {
+		p = db.Password
+		db.Password, _ = utils.Encrypt(db.Password, defaultPassword)
+	}
+	return fmt.Sprintf("user=%s dbname=%s password=%s sslmode=%s", db.User, db.Dbname, p, db.Sslmode)
 }
 
 // 读取配置文件
@@ -88,10 +95,7 @@ func (config *Config) Save() error {
 	log.WithFields(log.Fields{
 		"db": config.Db,
 	}).Debug("save")
-	old := config.Db.Password
-	config.Db.Password, _ = utils.Encrypt(old, "xuender@gmail.com")
 	bs, err := json.MarshalIndent(config, " ", " ")
-	config.Db.Password = old
 	if err != nil {
 		return err
 	}
