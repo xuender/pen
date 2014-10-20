@@ -51,3 +51,13 @@ func InitDb() {
 		}
 	}
 }
+
+// 初始化数据库
+func initDb(data *string, session Session) (interface{}, error) {
+	BaseConfig.Db.Init = true
+	InitDb()
+	return "ok", nil
+}
+func init() {
+	RegisterEvent(Code, 数据库初始化, initDb)
+}

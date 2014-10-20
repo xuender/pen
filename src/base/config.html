@@ -1,0 +1,108 @@
+<ol class="breadcrumb">
+  <li><a href="#">首页</a></li>
+  <li>系统管理</li>
+  <li class="active">系统配置</li>
+</ol>
+<form class="form-horizontal" role="form" name="form">
+  <tabset>
+    <tab heading="数据库">
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-xs-6"
+        ng-class="{'has-error': form.dialect.$error.required}">
+          <label class="control-label col-xs-3" for="i_dialect">类型</label>
+          <div class="col-xs-6">
+            <select class="form-control" name="dialect" id="i_dialect" required 
+            ng-model="config.db.dialect" ng-options="k as v for (k, v) in dict_dialect" enter>
+              <option value="">-- 请选择 --</option>
+            </select>
+          </div><!-- 6 -->
+          <span class="help-block col-xs-3" ng-show="form.dialect.$error.required">不能为空</span>
+        </div><!-- form-group -->
+        <div class="form-group col-xs-6"
+        ng-class="{'has-error': form.dbname.$error.required}">
+          <label class="control-label col-xs-3" for="i_dbname">名称</label>
+          <div class="col-xs-6">
+            <input class="form-control" ng-model="config.db.dbname" enter
+            type="text" name="dbname" id="i_dbname" focus
+            required placeholder="输入数据库名称"/>
+          </div><!-- 6 -->
+          <span class="help-block col-xs-3" ng-show="form.dbname.$error.required">不能为空</span>
+        </div><!-- form-group -->
+      </div><!-- row -->
+      <div class="row">
+        <div class="form-group col-xs-6"
+        ng-class="{'has-error': form.user.$error.required}">
+          <label class="control-label col-xs-3" for="i_user">用户</label>
+          <div class="col-xs-6">
+            <input class="form-control" ng-model="config.db.user" enter
+            type="text" name="user" id="i_user" focus
+            required placeholder="输入数据库用户"/>
+          </div><!-- 6 -->
+          <span class="help-block col-xs-3" ng-show="form.user.$error.required">不能为空</span>
+        </div><!-- form-group -->
+        <div class="form-group col-xs-6"
+        ng-class="{'has-error': form.password.$error.required}">
+          <label class="control-label col-xs-3" for="i_password">密码</label>
+          <div class="col-xs-6">
+            <input class="form-control" ng-model="config.db.password" enter
+            type="password" name="password" id="i_password" focus
+            required placeholder="输入数据库密码"/>
+          </div><!-- 6 -->
+          <span class="help-block col-xs-3" ng-show="form.password.$error.required">不能为空</span>
+        </div><!-- form-group -->
+      </div><!-- row -->
+      <div class="row">
+        <div class="form-group col-xs-6"
+        ng-class="{'has-error': form.sslmode.$error.required}">
+          <label class="control-label col-xs-3" for="i_sslmode">SSL模式</label>
+          <div class="col-xs-6">
+            <input class="form-control" ng-model="config.db.sslmode" enter
+            type="text" name="sslmode" id="i_sslmode" focus
+            required placeholder="输入数据库SSL模式"/>
+          </div><!-- 6 -->
+          <span class="help-block col-xs-3" ng-show="form.sslmode.$error.required">不能为空</span>
+        </div><!-- form-group -->
+      </div><!-- row -->
+    </div><!-- modal-body -->
+    </tab>
+    <tab heading="开发">
+      <div class="modal-body">
+        <div class="row">
+          <div class="form-group col-xs-6">
+            <label class="control-label col-xs-3" for="i_debug">调试模式</label>
+            <div class="col-xs-6">
+              <input id="i_debug" required name="debug" type="checkbox" ng-model="config.dev.debug">
+            </div><!-- 6 -->
+          </div><!-- form-group -->
+        </div><!-- row -->
+      </div><!-- modal-body -->
+    </tab>
+    <tab heading="网络">
+      <div class="modal-body">
+        <div class="row">
+          <div class="form-group col-xs-6"
+          ng-class="{'has-error': form.port.$error.number}">
+            <label class="control-label col-xs-3" for="i_port">端口号</label>
+            <div class="col-xs-6">
+              <input class="form-control" id="i_port" name="port" type="number" ng-model="config.web.port">
+            </div><!-- 6 -->
+            <span class="help-block col-xs-3" ng-show="form.port.$error.number">必须为数字默认为80</span>
+          </div><!-- form-group -->
+        </div><!-- row -->
+      </div><!-- modal-body -->
+    </tab>
+  </tabset>
+</form>
+<div class="modal-footer">
+  <button ng-disabled="!form.$valid || isSend" ng-click="save()" enter="save()"
+  class="btn btn-primary">
+    <i class="fa fa-spinner fa-spin" ng-show="isSend"></i>
+    修改
+  </button>
+  <button ng-disabled="isSend" ng-click="dbInit()"
+  class="btn btn-danger">
+    <i class="fa fa-spinner fa-spin" ng-show="isSend"></i>
+    数据库初始化
+  </button>
+</div><!-- modal-footer -->

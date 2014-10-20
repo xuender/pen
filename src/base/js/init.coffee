@@ -30,6 +30,13 @@ MENUS = [
         }
       }
       {
+        templateUrl: 'base/config.html'
+        controller: 'ConfigCtrl'
+        name: '系统配置'
+        url: '/config'
+        menu: true
+      }
+      {
         templateUrl: 'base/dict.html'
         controller: 'DictCtrl'
         name: '字典管理'

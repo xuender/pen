@@ -49,6 +49,7 @@
       <div class="right-bar" ng-class="{'col-xs-9':showLeft, 'col-xs-12':!showLeft}">
         <div class="resize-bar pull-right" title="关闭侧栏" ng-click="showLeft=!showLeft">
         </div>
+        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
         <div ng-view></div>
       </div><!-- 9 -->
       <div class="col-xs-3 left-bar" ng-show="showLeft" ng-include="'base/left.html'" />

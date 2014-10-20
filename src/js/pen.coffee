@@ -10,6 +10,19 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
   $scope.token = ''
   $scope.showLeft = true
   commands = {}
+  $scope.alerts = []
+  $scope.alert = (msg, type='success')->
+    # 提示
+    $scope.alerts.push(
+      type: type
+      msg: msg
+    )
+  $scope.error = (msg)->
+    # 错误
+    $scope.alert(msg, 'danger')
+  $scope.closeAlert = (index)->
+    # 关闭提示框
+    $scope.alerts.splice(index, 1)
   $scope.eventLogin = (data)->
     # 登陆事件
     $scope.isLogin = false

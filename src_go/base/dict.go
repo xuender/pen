@@ -149,6 +149,16 @@ func init() {
 	meta.AddDbFunc(func() {
 		if db.CreateTable(&Dict{}).Error == nil {
 			db.Model(&Dict{}).AddUniqueIndex("idx_dict_code", "type", "code")
+			db.Create(&Dict{
+				Type:  "type",
+				Code:  "dialect",
+				Title: "数据库类型",
+			})
+			db.Create(&Dict{
+				Type:  "dialect",
+				Code:  "postgres",
+				Title: "Postgresql",
+			})
 		} else {
 			db.AutoMigrate(&Dict{})
 		}

@@ -239,6 +239,7 @@ module.exports = (grunt)->
             'src/base/js/user.coffee'
             'src/base/js/dict.coffee'
             'src/base/js/objects.coffee'
+            'src/base/js/config.coffee'
             'src/class/js/init.coffee'
             'src/class/js/employee.coffee'
             'src/class/js/teacher.coffee'

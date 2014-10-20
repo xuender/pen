@@ -63,6 +63,7 @@ func (config *Config) Read(file string) error {
 	log.WithFields(log.Fields{
 		"File": file,
 	}).Debug("读取配置文件")
+	// 读取配置文件
 	bytes, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.WithFields(log.Fields{
@@ -70,15 +71,18 @@ func (config *Config) Read(file string) error {
 		}).Error("读取文件错误")
 		return err
 	}
+	// 解析
 	if err := json.Unmarshal(bytes, config); err != nil {
 		log.WithFields(log.Fields{
 			"err": err,
 		}).Error("解析JSON错误")
 		return err
 	}
+	// 加密密码
 	if config.Db.encode() {
 		config.Save()
 	}
+	// 日志级别
 	if config.Dev.Debug {
 		log.SetLevel(log.DebugLevel)
 	}
@@ -99,7 +103,32 @@ func (config *Config) Save() error {
 	if err != nil {
 		return err
 	}
+	// 日志级别
+	if config.Dev.Debug {
+		log.SetLevel(log.DebugLevel)
+	}
 	return ioutil.WriteFile(config.File, bs, 0600)
 }
 
+// 配置查询
+func getConfigEvent(data *string, session Session) (interface{}, error) {
+	return BaseConfig, nil
+}
+
+// 配置修改
+func updateConfigEvent(data *string, session Session) (interface{}, error) {
+	json.Unmarshal([]byte(*data), &BaseConfig)
+	log.WithFields(log.Fields{
+		"BaseConfig": BaseConfig,
+	}).Debug("updateConfig")
+	BaseConfig.Save()
+	return "ok", nil
+}
+
+// 基础配置
 var BaseConfig Config
+
+func init() {
+	RegisterEvent(Code, 配置查询, getConfigEvent)
+	RegisterEvent(Code, 配置编辑, updateConfigEvent)
+}
