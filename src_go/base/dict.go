@@ -151,6 +151,31 @@ func init() {
 			db.Model(&Dict{}).AddUniqueIndex("idx_dict_code", "type", "code")
 			db.Create(&Dict{
 				Type:  "type",
+				Code:  "gender",
+				Title: "性别",
+			})
+			db.Create(&Dict{
+				Type:  "type",
+				Code:  "province",
+				Title: "省份",
+			})
+			db.Create(&Dict{
+				Type:  "gender",
+				Code:  "M",
+				Title: "男",
+			})
+			db.Create(&Dict{
+				Type:  "gender",
+				Code:  "F",
+				Title: "女",
+			})
+			db.Create(&Dict{
+				Type:  "province",
+				Code:  "SD",
+				Title: "山东省",
+			})
+			db.Create(&Dict{
+				Type:  "type",
 				Code:  "dialect",
 				Title: "数据库类型",
 			})
@@ -174,30 +199,4 @@ func init() {
 			dictMap[dv.Type] = dv.Ver
 		}
 	})
-
-	//db.Create(&Dict{
-	//	Type:  "type",
-	//	Code:  "gender",
-	//	Title: "性别",
-	//})
-	//db.Create(&Dict{
-	//	Type:  "type",
-	//	Code:  "province",
-	//	Title: "省份",
-	//})
-	//db.Create(&Dict{
-	//	Type:  "gender",
-	//	Code:  "M",
-	//	Title: "男",
-	//})
-	//db.Create(&Dict{
-	//	Type:  "gender",
-	//	Code:  "F",
-	//	Title: "女",
-	//})
-	//db.Create(&Dict{
-	//	Type:  "province",
-	//	Code:  "SD",
-	//	Title: "山东省",
-	//})
 }
