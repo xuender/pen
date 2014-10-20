@@ -1,1 +1,58 @@
-<h1>学习班</h1>
+<div class="modal-header">
+  <button class="close" type="button" ng-click="cancel()">
+    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+  </button>
+  <h4 class="modal-title">班级编辑</h4>
+</div><!-- modal-header -->
+<div class="modal-body">
+  <form class="form-horizontal" role="form" name="form">
+    <div class="row">
+      <div class="form-group col-xs-6"
+      ng-class="{'has-error': form.start.$error.required}">
+        <label class="control-label col-xs-3" for="i_start">起始日期</label>
+        <div class="col-xs-6">
+          <p class="input-group">
+            <input type="text" class="form-control" name="start" id="i_start"
+            datepicker-popup="yyyy-MM-dd" ng-model="d.StartAt" is-open="opened"
+            datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
+            ng-required="true" close-text="关闭" current-text="今天" clear-text="清除"/>
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default" ng-click="openDate($event)"><i class="fa fa-calendar"></i></button>
+            </span>
+          </p>
+        </div><!-- 6 -->
+        <span class="help-block col-xs-3" ng-show="form.start.$error.required">不能为空</span>
+      </div><!-- form-group -->
+      <div class="form-group col-xs-6"
+      ng-class="{'has-error': form.end.$error.required}">
+        <label class="control-label col-xs-3" for="i_end">截止日期</label>
+        <div class="col-xs-6">
+          <p class="input-group">
+            <input type="text" class="form-control" name="end" id="i_end"
+            datepicker-popup="yyyy-MM-dd" ng-model="d.EndAt" is-open="endOpened"
+            datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
+            ng-required="true" close-text="关闭" current-text="今天" clear-text="清除"/>
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default" ng-click="openDate($event, true)"><i class="fa fa-calendar"></i></button>
+            </span>
+          </p>
+        </div><!-- 6 -->
+        <span class="help-block col-xs-3" ng-show="form.end.$error.required">不能为空</span>
+      </div><!-- form-group -->
+    </div><!-- row -->
+    <div ng-include="'base/base_object.html'"></div>
+  </form>
+</div><!-- modal-body -->
+<div class="modal-footer">
+  <button ng-disabled="!form.$valid || isSend" ng-click="ok()" enter="ok()"
+  class="btn btn-primary">
+    <i class="fa fa-spinner fa-spin" ng-show="isSend"></i>
+    确定
+  </button>
+  <button ng-click="del()" ng-disabled="isSend" class="btn btn-danger">
+    <i class="fa fa-times"></i>
+    删除
+  </button>
+  <button ng-hide="init" class="btn btn-warning" ng-click="cancel()">取消</button>
+</div><!-- modal-footer -->
+

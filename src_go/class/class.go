@@ -24,18 +24,20 @@ func getClassEvent(data *string, session base.Session) (interface{}, error) {
 	db.Find(&cs)
 	return cs, nil
 }
+
+// 班级修改
 func updateClassEvent(data *string, session base.Session) (ret interface{}, err error) {
 	ret = "ok"
 	var e Class
 	json.Unmarshal([]byte(*data), &e)
 	log.WithFields(log.Fields{
 		"ID": e.Id,
-	}).Debug("修改雇员")
+	}).Debug("班级修改")
 	err = db.Save(&e).Error
 	return
 }
 
-// 删除雇员
+// 班级删除
 func delClassEvent(data *string, session base.Session) (ret interface{}, err error) {
 	ret = "ok"
 	var id int64

@@ -230,20 +230,9 @@ module.exports = (grunt)->
       main:
         files:
           'src_go/public/js/main.min.js': [
-            'src/js/init.coffee'
-            'src/js/utils.coffee'
-            'src/js/pen.coffee'
-            'src/base/js/init.coffee'
-            'src/base/js/login.coffee'
-            'src/base/js/home.coffee'
-            'src/base/js/user.coffee'
-            'src/base/js/dict.coffee'
-            'src/base/js/objects.coffee'
-            'src/base/js/config.coffee'
-            'src/class/js/init.coffee'
-            'src/class/js/employee.coffee'
-            'src/class/js/teacher.coffee'
-            'src/class/js/student.coffee'
+            'src/js/*.coffee'
+            'src/base/js/*.coffee'
+            'src/class/js/*.coffee'
           ]
     uglify:
       main:

@@ -23,7 +23,7 @@ MENUS.push(
         }
       }
       {
-        templateUrl: 'class/teachers.html'
+        templateUrl: 'class/teacher.html'
         controller: 'ObjectsCtrl'
         name: '教师'
         url: '/teachers'
@@ -36,11 +36,17 @@ MENUS.push(
         }
       }
       {
-        templateUrl: 'class/teacher.html'
-        controller: 'TeacherCtrl'
+        templateUrl: 'class/classes.html'
+        controller: 'ObjectsCtrl'
         name: '班级'
-        url: '/teacher2'
+        url: '/class'
         menu: true
+        object: {
+          code: 'class'
+          templateUrl: 'class/class.html'
+          controller: 'ClassCtrl'
+          getId: CLASS.班级查询
+        }
       }
       {
         templateUrl: 'class/students.html'
