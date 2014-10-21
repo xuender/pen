@@ -83,6 +83,10 @@ var dictMap = make(map[string]int)
 func dictVerEvent(data *string, ws *websocket.Conn, session Session) {
 	m := make(map[string]int)
 	json.Unmarshal([]byte(*data), &m)
+	log.WithFields(log.Fields{
+		"m":       m,
+		"dictMap": dictMap,
+	}).Debug("dictVerEvent")
 	for k, v := range dictMap {
 		u, ok := m[k]
 		if ok && u == v {
@@ -192,11 +196,13 @@ func init() {
 		} else {
 			db.AutoMigrate(&DictVer{})
 		}
-		errorMessage["idx_dict_code"] = "字典代码不能重复"
+	})
+	meta.AddDbInitFunc(func() {
 		var dvs []DictVer
 		db.Find(&dvs)
 		for _, dv := range dvs {
 			dictMap[dv.Type] = dv.Ver
 		}
 	})
+	errorMessage["idx_dict_code"] = "字典代码不能重复"
 }

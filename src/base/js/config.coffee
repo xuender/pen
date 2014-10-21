@@ -18,25 +18,25 @@ ConfigCtrl = ($scope, $log, $route)->
   $scope.dbInit = ->
     # 数据库初始化
     $scope.isSend = true
-    $scope.send('base', BASE.数据库初始化)
+    $scope.send('base', BASE.SJKCSH)
   $scope.save = ->
     # 保存
     $scope.isSend = true
-    $scope.send('base', BASE.配置编辑, $scope.config)
-  $scope.registerEvent('base', BASE.配置编辑, (data)->
+    $scope.send('base', BASE.PZBJ, $scope.config)
+  $scope.registerEvent('base', BASE.PZBJ, (data)->
     if 'ok' == data
       $scope.isSend = false
       $scope.alert('保存成功')
-      $scope.send('base', BASE.配置查询)
+      $scope.send('base', BASE.PZCX)
   )
-  $scope.registerEvent('base', BASE.数据库初始化, (data)->
+  $scope.registerEvent('base', BASE.SJKCSH, (data)->
     if 'ok' == data
       $scope.isSend = false
       $scope.alert('数据库初始化完毕')
   )
-  $scope.registerEvent('base', BASE.配置查询, $scope.readConfig)
+  $scope.registerEvent('base', BASE.PZCX, $scope.readConfig)
   $scope.ready(->
-    $scope.send('base', BASE.配置查询)
+    $scope.send('base', BASE.PZCX)
   )
 
 ConfigCtrl.$inject = [

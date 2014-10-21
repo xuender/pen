@@ -19,11 +19,11 @@ MENUS.push(
           code: 'class'
           templateUrl: 'class/employee.html'
           controller: 'EmployeeCtrl'
-          getId: CLASS.雇员查询
+          getId: CLASS.GYCX
         }
       }
       {
-        templateUrl: 'class/teacher.html'
+        templateUrl: 'class/teachers.html'
         controller: 'ObjectsCtrl'
         name: '教师'
         url: '/teachers'
@@ -32,7 +32,7 @@ MENUS.push(
           code: 'class'
           templateUrl: 'class/teacher.html'
           controller: 'TeacherCtrl'
-          getId: CLASS.教师查询
+          getId: CLASS.JSCX
         }
       }
       {
@@ -45,7 +45,7 @@ MENUS.push(
           code: 'class'
           templateUrl: 'class/class.html'
           controller: 'ClassCtrl'
-          getId: CLASS.班级查询
+          getId: CLASS.BJCX
         }
       }
       {
@@ -58,7 +58,7 @@ MENUS.push(
           code: 'class'
           templateUrl: 'class/student.html'
           controller: 'StudentCtrl'
-          getId: CLASS.学员查询
+          getId: CLASS.XYCX
         }
       }
     ]

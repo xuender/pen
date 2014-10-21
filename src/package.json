@@ -1,0 +1,17 @@
+{
+  "main": "index.html",
+  "name": "学习班管理",
+  "version": "0.0.1",
+  "description": "学习班管理客户端应用",
+  "window": {
+    "title": "学习班管理",
+    "icon": "pen.png",
+    "toolbar": false,
+    "frame": true,
+    "width": 1000,
+    "height": 700,
+    "position": "mouse",
+    "min_width": 800,
+    "min_height": 600
+  }
+}

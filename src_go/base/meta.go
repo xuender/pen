@@ -3,22 +3,29 @@ package base
 import (
 	"errors"
 	"fmt"
+	gd "github.com/xuender/godecode2"
 	"strings"
 	//  log "github.com/Sirupsen/logrus"
 )
 
 // 模块元信息
 type Meta struct {
-	Name        string
-	Code        string
-	Description string
-	Action      map[uint]string
-	DbFuncs     []func()
+	Name          string
+	Code          string
+	Description   string
+	Action        map[uint]string
+	DbCreateFuncs []func()
+	DbInitFuncs   []func()
 }
 
 // 增加数据库初始化方法
 func (m *Meta) AddDbFunc(f func()) {
-	m.DbFuncs = append(m.DbFuncs, f)
+	m.DbCreateFuncs = append(m.DbCreateFuncs, f)
+}
+
+// 增加数据库启动执行的方法
+func (m *Meta) AddDbInitFunc(f func()) {
+	m.DbInitFuncs = append(m.DbInitFuncs, f)
 }
 
 var metas []*Meta
@@ -34,7 +41,7 @@ func GetMetaJs() string {
 	for _, m := range metas {
 		ret += "var " + strings.ToUpper(m.Code) + "={"
 		for k, v := range m.Action {
-			ret += fmt.Sprintf("%s:%d,", v, k)
+			ret += fmt.Sprintf("%s:%d,", gd.Initials(v), k)
 		}
 		ret += "};\n"
 	}

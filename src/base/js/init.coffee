@@ -26,7 +26,7 @@ MENUS = [
           code: 'base'
           templateUrl: 'base/user.html'
           controller: 'UserCtrl'
-          getId: BASE.用户查询
+          getId: BASE.YHCX
         }
       }
       {

@@ -32,5 +32,6 @@ bower_components
 # 生成文件
 src_go/public
 src_go/base/checkData.go
+dist/
 
 *.vim

@@ -45,9 +45,14 @@ func InitDb() {
 		BaseConfig.Db.Init = false
 		BaseConfig.Save()
 		for _, m := range metas {
-			for _, f := range m.DbFuncs {
+			for _, f := range m.DbCreateFuncs {
 				f()
 			}
+		}
+	}
+	for _, m := range metas {
+		for _, f := range m.DbInitFuncs {
+			f()
 		}
 	}
 }

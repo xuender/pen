@@ -28,8 +28,8 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
     $scope.isLogin = false
     if data == 'OK'
       $scope.isLogin = true
-      # 获取版本
-      $scope.send('base', BASE.字典版本, JSON.stringify($scope.dictVer))
+      # 获取字典版本
+      $scope.send('base', BASE.ZDBB, JSON.stringify($scope.dictVer))
       for r in readies
         console.info 'run ready'
         r()
@@ -59,9 +59,9 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
     else
       alert(d.msg)
   )
-  $scope.registerEvent('base', BASE.登录, $scope.eventLogin)
-  $scope.registerEvent('base', BASE.人数, $scope.eventCount)
-  $scope.registerEvent('base', BASE.字典获取, (data)->
+  $scope.registerEvent('base', BASE.DL, $scope.eventLogin)
+  $scope.registerEvent('base', BASE.RS, $scope.eventCount)
+  $scope.registerEvent('base', BASE.ZDHQ, (data)->
     $log.debug("dict....."+data)
     d = JSON.parse(data)
     $log.debug(d)
@@ -82,7 +82,10 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
     def
   # 消息处理
   $scope.like = false
-  ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
+  if typeof(WEB) == "undefined"
+    ws = ngSocket("ws://#{location.origin.split('//')[1]}/ws")
+  else
+    ws = ngSocket("ws://#{WEB}/ws")
   ws.onMessage((data)->
     $scope.like = !$scope.like
     dmsg = JSON.parse(data.data)
@@ -100,7 +103,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
     $log.debug('login', $scope.user)
     $log.debug($scope.tract)
     $scope.token = md5($scope.tract + $scope.user.token)
-    $scope.send('base', BASE.登录, JSON.stringify(
+    $scope.send('base', BASE.DL, JSON.stringify(
       'nick': $scope.user.nick
       'token': $scope.token
     ))
@@ -149,7 +152,7 @@ PenCtrl = ($scope, $log, $modal, ngSocket, lss, $q, $location)->
   $scope.logout = ->
     ### 登出 ###
     $scope.user.token = ''
-    $scope.send('base', BASE.登出)
+    $scope.send('base', BASE.DC)
     $scope.showLogin(true)
   $scope.send = (code, event, data=null)->
     # 发送数据

@@ -20,8 +20,29 @@ module.exports = (grunt)->
     bump:
       options:
         part: 'patch'
-      files: [ 'package.json', 'bower.json']
+      files: [ 'package.json', 'bower.json', 'src/package.json']
     copy:
+      dist:
+        files: [
+          {
+            cwd: 'src_go/public'
+            src: '**'
+            dest: 'dist'
+            expand: true
+          }
+          {
+            cwd: 'src'
+            src: 'meta.js'
+            dest: 'dist'
+            expand: true
+          }
+          {
+            cwd: 'src'
+            src: 'package.json'
+            dest: 'dist'
+            expand: true
+          }
+        ]
       root:
         files: [
           cwd: 'src'
@@ -237,7 +258,7 @@ module.exports = (grunt)->
     uglify:
       main:
         files:
-          'dist/go/public/js/main.min.js': [
+          'dist/js/main.min.js': [
             'src_go/public/js/main.min.js'
           ]
     cssmin:
@@ -275,11 +296,12 @@ module.exports = (grunt)->
   grunt.registerTask('test', ['karma'])
   grunt.registerTask('dev', [
     'clean'
-    'copy',
+    'copy'
     'coffee'
   ])
   grunt.registerTask('dist', [
     'dev'
+    'copy:dist'
     'uglify'
   ])
   grunt.registerTask('deploy', [
